@@ -153,19 +153,19 @@ public class AutoDriveApollo_RedRight extends LinearOpMode {
 
     // These constants define the desired driving/control characteristics
     // They can/should be tweaked to suit the specific robot drive train.
-    static final double     DRIVE_SPEED             = 0.7 * 0.65;
-    static final double     DRIVE_SURF_SPEED        = 0.9 * 0.65;// Max driving speed for better distance accuracy.
-    static final double     TURN_SPEED              = 0.8 * 0.65;
-    static final double     TURN_SPEED_FIX          = 0.4 * 0.65; // Max Turn speed to limit turn rate
-    static final double     HEADING_THRESHOLD       = 0.5;    // How close must the heading get to the target before moving to next step.
-                                                               // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
-                                                                //PLAY
+    public final double     DRIVE_SPEED             = 0.6;
+    public final double     DRIVE_SURF_SPEED        = 0.9 * 0.65;// Max driving speed for better distance accuracy.
+    public final double     TURN_SPEED              = 0.8 * 0.65;
+    public final double     TURN_SPEED_FIX          = 0.4 * 0.65; // Max Turn speed to limit turn rate
+    public static final double     HEADING_THRESHOLD       = 0.5;    // How close must the heading get to the target before moving to next step.
+    // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
+    //PLAY
     // Define the Proportional control coefficient (or GAIN) for "heading control".
     // We define one value when Turning (larger errors), and the other is used when Driving straight (smaller errors).
     // Increase these numbers if the heading does not corrects strongly enough (eg: a heavy robot or using tracks)
     // Decrease these numbers if the heading does not settle on the correct value (eg: very agile robot with omni wheels)
-    static final double     P_TURN_GAIN            = 0.01;     // Larger is more responsive, but also less stable ; PLAY WITH THIS
-    static final double     P_DRIVE_GAIN           = 0.0001;     // Larger is more responsive, but also less stable
+    public final double     P_TURN_GAIN            = 0.01;     // Larger is more responsive, but also less stable ; PLAY WITH THIS
+    public final double     P_DRIVE_GAIN           = 0.03;      // Larger is more responsive, but also less stable
 
     RobotHardware_apollo robot = new RobotHardware_apollo();
     HuskyLens_Apollo robotHuskLens = new HuskyLens_Apollo();
@@ -356,7 +356,7 @@ public class AutoDriveApollo_RedRight extends LinearOpMode {
         // Ensure that the opmode is still active
         if (opModeIsActive()) {
 
-            Log.d(TAG_DRIVE, "drive right; maxDriveSpeed: " + maxDriveSpeed + "distance: " + heading);
+            Log.d(TAG_DRIVE, "drive right; maxDriveSpeed: " + maxDriveSpeed + "distance: " + distance);
             // Determine new target position, and pass to motor controller
             int moveCounts = (int)(distance * COUNTS_PER_INCH);
             frontLeftTarget = (int) robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) + moveCounts;
@@ -650,6 +650,14 @@ public class AutoDriveApollo_RedRight extends LinearOpMode {
         if (straight) {
            Log.d(TAG_DRIVE,"Motion " + "Drive Straight " );
           //  telemetry.addData("Motion", "Drive Straight");
+            Log.d(TAG_DRIVE,"Current Position; front left: " + robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) +
+                    " front right "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) +
+                    " back left "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE)+
+                    " back right "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE));
+            Log.d(TAG_DRIVE,"Go To Position; front left: " + frontLeftTarget +
+                    " front right "+ frontRightTarget +
+                    " back left "+ backLeftTarget+
+                    " back right "+ backRightTarget);
             //telemetry.addData("Target Pos L:R",  "%7d:%7d",      leftTarget,  rightTarget);
            // telemetry.addData("Actual Pos L:R",  "%7d:%7d",      frontLeftDrive.getCurrentPosition(),
                     //frontRightDrive.getCurrentPosition());

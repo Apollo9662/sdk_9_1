@@ -144,7 +144,7 @@ public class RobotHardware_apollo_FtcLib {
         frontRightDrive.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         backRightDrive.setZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
 
-        frontRightDrive.setInverted(true);
+        //frontRightDrive.setInverted(true);
         /*
         backRightDrive.setInverted(true);
         frontLeftDrive.setInverted(true);

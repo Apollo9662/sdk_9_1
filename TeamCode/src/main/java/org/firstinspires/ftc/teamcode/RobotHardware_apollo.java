@@ -131,9 +131,9 @@ public class RobotHardware_apollo {
         ARM_SERVO_COLLECT_POS (1.0),
         ARM_SERVO_DUMP_POS (0.4594),
         ARM_SERVO_DUMP_POS_AUTO_DRIVE (0.44),
-        ARM_SERVO_GARD_OPEN_POS (0.3),
-        ARM_SERVO_GARD_CLOSE_POS (0.61),
-        ARM_SERVO_GARD_OPEN_CLOSE_POS (0.485);
+        ARM_SERVO_GARD_OPEN_POS (0.5),
+        ARM_SERVO_GARD_CLOSE_POS (0.7194),
+        ARM_SERVO_GARD_OPEN_CLOSE_POS (0.5454);
 
         public Double Pos;
 
@@ -173,7 +173,7 @@ public class RobotHardware_apollo {
             backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
             frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
             backRightDrive.setDirection(DcMotor.Direction.FORWARD);
-            frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
+            frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
             backLeftDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             backRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             frontRightDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

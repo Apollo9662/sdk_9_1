@@ -151,7 +151,7 @@ public class AutoDriveApollo_Rectangel extends LinearOpMode {
 
     // These constants define the desired driving/control characteristics
     // They can/should be tweaked to suit the specific robot drive train.
-    static final double     DRIVE_SPEED             = 0.7 * 0.65;
+    static final double     DRIVE_SPEED             = 0.6;
     static final double     DRIVE_SURF_SPEED        = 0.9 * 0.65;// Max driving speed for better distance accuracy.
     static final double     TURN_SPEED              = 0.8 * 0.65;
     static final double     TURN_SPEED_FIX          = 0.4 * 0.65; // Max Turn speed to limit turn rate
@@ -163,7 +163,7 @@ public class AutoDriveApollo_Rectangel extends LinearOpMode {
     // Increase these numbers if the heading does not corrects strongly enough (eg: a heavy robot or using tracks)
     // Decrease these numbers if the heading does not settle on the correct value (eg: very agile robot with omni wheels)
     static final double     P_TURN_GAIN            = 0.01;     // Larger is more responsive, but also less stable ; PLAY WITH THIS
-    static final double     P_DRIVE_GAIN           = 0.0001;     // Larger is more responsive, but also less stable
+    static final double     P_DRIVE_GAIN           = 0.03;     // Larger is more responsive, but also less stable
 
     RobotHardware_apollo robot = new RobotHardware_apollo();
     HuskyLens_Apollo robotHuskLens = new HuskyLens_Apollo();
@@ -209,7 +209,8 @@ public class AutoDriveApollo_Rectangel extends LinearOpMode {
 
         //driveLeft(DRIVE_SPEED,10,0);
         //driveRight(DRIVE_SPEED,10,0);
-        driveStraight(DRIVE_SPEED,-23*5,0);
+        driveStraight(DRIVE_SPEED,-23*3,0);
+        turnToHeadingApollo(TURN_SPEED,90);
         //}
         //driveStraight(DRIVE_SPEED, 23 * 2, 0 );
 
@@ -313,6 +314,15 @@ public class AutoDriveApollo_Rectangel extends LinearOpMode {
 
                 // Display drive status for the driver.
                 sendTelemetry(true);
+                Log.d(TAG_DRIVE,"Current Position; front left: " + robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) +
+                        " front right "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) +
+                        " back left "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE)+
+                        " back right "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE));
+                Log.d(TAG_DRIVE,"Go To Position; front left: " + frontLeftTarget +
+                        " front right "+ frontRightTarget +
+                        " back left "+ backLeftTarget+
+                        " back right "+ backRightTarget);
+
             }
 
             // Stop all motion & Turn off RUN_TO_POSITION

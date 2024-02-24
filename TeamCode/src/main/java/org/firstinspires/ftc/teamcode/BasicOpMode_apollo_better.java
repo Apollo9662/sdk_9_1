@@ -712,9 +712,10 @@ public class BasicOpMode_apollo_better extends OpMode {
                         robot.armServoGardState = RobotHardware_apollo.ArmServoGardState.OPEN_CLOSE;
                         //armServoGardState = ArmServoGardState.OPEN_CLOSE;
                         robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_CLOSE_POS.Pos);
+
                         try
                         {
-                            Thread.sleep(750);
+                            Thread.sleep(1500);
                         }  catch (Exception e)
                         {
                             Log.d(TAG_COLLECTION_THREAD, "catch exception: " + e.toString());
@@ -777,6 +778,14 @@ public class BasicOpMode_apollo_better extends OpMode {
                 Log.d(TAG_LIFT,"liftPositionB " + liftPositionB);
                 Log.d(TAG_LIFT,"liftPositionX " + liftPositionX);
                 Log.d(TAG_LIFT,"pos is " + robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT));
+                if ((robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT) < 100) || (runtime.seconds() > 3 * 60))
+                {
+                    robot.SetZeroPowerBehavior(RobotHardware_apollo.DriveMotors.LIFT, DcMotor.ZeroPowerBehavior.FLOAT);
+                }
+                else
+                {
+                    robot.SetZeroPowerBehavior(RobotHardware_apollo.DriveMotors.LIFT, DcMotor.ZeroPowerBehavior.BRAKE);
+                }
                 if (liftStop)
                 {
                     switch (liftStopStat)

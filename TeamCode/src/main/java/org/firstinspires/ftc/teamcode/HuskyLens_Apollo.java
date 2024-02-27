@@ -12,7 +12,7 @@ public class HuskyLens_Apollo
 {
     final String TAG_HUSKYLENS = "HuskyLens_Apollo";
     //private final int READ_PERIOD = 1;
-    int middle = 180;
+    int middle = 170;
     int maxTop = 130;
     int minTop = 70;
     private boolean isPress = false;

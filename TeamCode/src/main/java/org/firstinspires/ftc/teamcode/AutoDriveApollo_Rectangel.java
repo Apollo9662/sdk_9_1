@@ -86,7 +86,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @Autonomous(name="Apollo Autonomous Rectangel ", group="Apollo")
-@Disabled
+//@Disabled
 public class AutoDriveApollo_Rectangel extends LinearOpMode {
 
     /* Declare OpMode members. */
@@ -210,8 +210,9 @@ public class AutoDriveApollo_Rectangel extends LinearOpMode {
 
         //driveLeft(DRIVE_SPEED,10,0);
         //driveRight(DRIVE_SPEED,10,0);
-        driveStraight(DRIVE_SPEED,-23*3,0);
-        turnToHeadingApollo(TURN_SPEED,90);
+        driveRight(DRIVE_SPEED,-23*3,0);
+        holdHeading(TURN_SPEED,0,1);
+        //turnToHeadingApollo(TURN_SPEED,90);
         //}
         //driveStraight(DRIVE_SPEED, 23 * 2, 0 );
 
@@ -391,10 +392,18 @@ public class AutoDriveApollo_Rectangel extends LinearOpMode {
                     turnSpeed *= -1.0;
 
                 // Apply the turning correction to the current driving speed.
-                moveRobot(driveSpeed, turnSpeed);
+                moveRobotRight(driveSpeed, turnSpeed);
 
                 // Display drive status for the driver.
                 sendTelemetry(true);
+                Log.d(TAG_DRIVE,"Current Position; front left: " + robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) +
+                        " front right "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) +
+                        " back left "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE)+
+                        " back right "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE));
+                Log.d(TAG_DRIVE,"Go To Position; front left: " + frontLeftTarget +
+                        " front right "+ frontRightTarget +
+                        " back left "+ backLeftTarget+
+                        " back right "+ backRightTarget);
             }
 
             // Stop all motion & Turn off RUN_TO_POSITION
@@ -461,10 +470,20 @@ public class AutoDriveApollo_Rectangel extends LinearOpMode {
                     turnSpeed *= -1.0;
 
                 // Apply the turning correction to the current driving speed.
-                moveRobot(driveSpeed, turnSpeed);
+                moveRobotLeft(driveSpeed, turnSpeed);
 
                 // Display drive status for the driver.
                 sendTelemetry(true);
+                Log.d(TAG_DRIVE,"Position at stop; front left: " + robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) +
+                        " front right "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) +
+                        " back left "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE)+
+                        " back right "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE));
+                //  sleep(3000);
+                Log.d(TAG_DRIVE,"Position after stop;" +
+                        " front left: " + robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) +
+                        " front right "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) +
+                        " back left "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE)+
+                        " back right "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE));
             }
 
             // Stop all motion & Turn off RUN_TO_POSITION
@@ -633,7 +652,66 @@ public class AutoDriveApollo_Rectangel extends LinearOpMode {
         robot.SetPower(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE, frontRightPower);
         robot.SetPower(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE, frontLeftPower);
     }
+    public void moveRobotRight(double drive, double turn) {
+        driveSpeed = drive;     // save this value as a class member so it can be used by telemetry.
+        turnSpeed  = turn;      // save this value as a class member so it can be used by telemetry.
 
+        double backLeftPower  = drive + turn;
+        double backRightPower = drive + turn;
+        double frontRightPower = drive - turn;
+        double frontLeftPower = drive - turn;
+
+        double maxFront = Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower));
+        double maxBack = Math.max (Math.abs(backLeftPower), Math.abs(backRightPower));
+        double max = Math.max(maxFront, maxBack);
+
+        if (max > 1) {
+            backLeftPower /= max;
+            backRightPower /= max;
+            frontLeftPower /= max;
+            frontRightPower /= max;
+        }
+        Log.d(TAG_DRIVE, "Wheel turn is " + turn);
+        Log.d(TAG_DRIVE,"Wheel Speeds is; " +
+                " back Left Power is " + backLeftPower +
+                " back Right Power is " + backRightPower +
+                " front Right Power" + frontRightPower +
+                " front Left Power" + frontLeftPower);
+        robot.SetPower(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE, backLeftPower);
+        robot.SetPower(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE, backRightPower);
+        robot.SetPower(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE, frontRightPower);
+        robot.SetPower(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE, frontLeftPower);
+    }
+    public void moveRobotLeft(double drive, double turn) {
+        driveSpeed = drive;     // save this value as a class member so it can be used by telemetry.
+        turnSpeed  = turn;      // save this value as a class member so it can be used by telemetry.
+
+        double backLeftPower  = drive - turn;
+        double backRightPower = drive - turn;
+        double frontRightPower = drive + turn;
+        double frontLeftPower = drive + turn;
+
+        double maxFront = Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower));
+        double maxBack = Math.max (Math.abs(backLeftPower), Math.abs(backRightPower));
+        double max = Math.max(maxFront, maxBack);
+
+        if (max > 1) {
+            backLeftPower /= max;
+            backRightPower /= max;
+            frontLeftPower /= max;
+            frontRightPower /= max;
+        }
+        Log.d(TAG_DRIVE, "Wheel turn is " + turn);
+        Log.d(TAG_DRIVE,"Wheel Speeds is; " +
+                " back Left Power is " + backLeftPower +
+                " back Right Power is " + backRightPower +
+                " front Right Power" + frontRightPower +
+                " front Left Power" + frontLeftPower);
+        robot.SetPower(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE, backLeftPower);
+        robot.SetPower(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE, backRightPower);
+        robot.SetPower(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE, frontRightPower);
+        robot.SetPower(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE, frontLeftPower);
+    }
     /**
      *  Display the various control parameters while driving
      *

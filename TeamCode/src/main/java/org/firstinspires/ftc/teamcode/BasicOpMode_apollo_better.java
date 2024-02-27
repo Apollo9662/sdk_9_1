@@ -719,7 +719,7 @@ public class BasicOpMode_apollo_better extends OpMode {
 
                     try
                     {
-                        Thread.sleep(750);
+                        Thread.sleep(600);
                     }  catch (Exception e)
                     {
                         Log.d(TAG_COLLECTION_THREAD, "catch exception: " + e.toString());

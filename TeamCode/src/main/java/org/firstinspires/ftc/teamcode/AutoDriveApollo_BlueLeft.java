@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -84,8 +85,8 @@ import com.qualcomm.robotcore.util.Range;
  *  Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Apollo Autonomous Blue left", group="Apollo")
-//@Disabled
+@Autonomous(name="Apollo Autonomous Blue left old", group="Apollo")
+@Disabled
 public class AutoDriveApollo_BlueLeft extends LinearOpMode {
 
     AutoDriveApollo_RedRight AutoDriveApollo_RedRight = new AutoDriveApollo_RedRight();

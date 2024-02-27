@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -85,7 +86,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @Autonomous(name="Apollo Autonomous Rectangel ", group="Apollo")
-//@Disabled
+@Disabled
 public class AutoDriveApollo_Rectangel extends LinearOpMode {
 
     /* Declare OpMode members. */

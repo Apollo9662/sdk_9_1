@@ -86,8 +86,8 @@ import com.qualcomm.robotcore.util.Range;
  *  Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Apollo Autonomous Red right", group="Apollo")
-//@Disabled
+@Autonomous(name="Apollo Autonomous Red right old", group="Apollo")
+@Disabled
 public class AutoDriveApollo_RedRight extends LinearOpMode {
 
     /* Declare OpMode members. */

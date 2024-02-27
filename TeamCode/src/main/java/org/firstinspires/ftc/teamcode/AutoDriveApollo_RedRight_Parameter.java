@@ -85,7 +85,7 @@ import com.qualcomm.robotcore.util.Range;
  *  Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Apollo Autonomous Red right Parameter", group="Apollo")
+@Autonomous(name="Apollo Autonomous Red right", group="Apollo")
 //@Disabled
 public class AutoDriveApollo_RedRight_Parameter extends LinearOpMode {
 
@@ -158,6 +158,7 @@ public class AutoDriveApollo_RedRight_Parameter extends LinearOpMode {
         //turnToHeading( TURN_SPEED,   -90.0);               // Turn  CW  to 0 Degrees
 
 
+        sleep(1000);
         telemetry.addData("Path", "Complete");
         telemetry.update();
         //sleep(1000);  // Pause to display last telemetry message.

@@ -79,7 +79,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
  *  Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Apollo Autonomous blue left Parameter", group="Apollo")
+@Autonomous(name="Apollo Autonomous blue left", group="Apollo")
 //@Disabled
 public class AutoDriveApollo_BlueLeft_Parameter extends LinearOpMode {
 
@@ -151,7 +151,7 @@ public class AutoDriveApollo_BlueLeft_Parameter extends LinearOpMode {
         //driveStraight(DRIVE_SPEED, 20.5, 0.0);  // Drive Forward 17" at 45 degrees (-12"x and 12"y)
         //turnToHeading( TURN_SPEED,   -90.0);               // Turn  CW  to 0 Degrees
 
-
+        sleep(1000);
         telemetry.addData("Path", "Complete");
         telemetry.update();
         //sleep(1000);  // Pause to display last telemetry message.

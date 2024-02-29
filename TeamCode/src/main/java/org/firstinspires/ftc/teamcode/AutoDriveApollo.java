@@ -93,9 +93,11 @@ public class AutoDriveApollo{
     /* Declare OpMode members. */
     public ElapsedTime time = new ElapsedTime();
     public ElapsedTime TimeOut = new ElapsedTime();
+    public ElapsedTime TurnTimeOut = new ElapsedTime();
     public ElapsedTime MoterTime = new ElapsedTime();
     boolean encodersAreWorking;
     public double TimeOutSec = 3;
+    public double TurnTimeOutSec = 5;
     public double old_BACK_LEFT_DRIVE_Pos = 0;
     public double old_BACK_RIGHT_DRIVE_Pos = 0;
     public double old_FRONT_RIGHT_DRIVE_Pos = 0;
@@ -156,7 +158,7 @@ public class AutoDriveApollo{
     public final double     DRIVE_SPEED             = 0.6;
     public final double     DRIVE_SURF_SPEED        = 0.9 * 0.65;// Max driving speed for better distance accuracy.
     public final double     TURN_SPEED              = 0.8 * 0.65;
-    public final double     TURN_SPEED_FIX          = 0.4 * 0.65; // Max Turn speed to limit turn rate
+    public final double     TURN_SPEED_FIX          = 0.4; // Max Turn speed to limit turn rate
     public static final double     HEADING_THRESHOLD       = 0.5;    // How close must the heading get to the target before moving to next step.
     // Requiring more accuracy (a smaller number) will often make the turn take longer to get into the final position.
     //PLAY
@@ -511,7 +513,8 @@ public class AutoDriveApollo{
         getSteeringCorrection(heading, P_DRIVE_GAIN);
 
         // keep looping while we are still active, and not on heading.
-        while (linearOpMode.opModeIsActive() && (Math.abs(headingError) > HEADING_THRESHOLD)) {
+        TurnTimeOut.reset();
+        while (linearOpMode.opModeIsActive() && (Math.abs(headingError) > HEADING_THRESHOLD) && TurnTimeOut.seconds() < TurnTimeOutSec) {
 
             // Determine required steering to keep on heading
             turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
@@ -524,6 +527,10 @@ public class AutoDriveApollo{
 
             // Display drive status for the driver.
             sendTelemetry(false);
+        }
+        if (TurnTimeOut.seconds() > TurnTimeOutSec)
+        {
+            Log.d(TAG_DRIVE,"turn time out");
         }
 
         // Stop all motion;
@@ -842,6 +849,16 @@ public class AutoDriveApollo{
             robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT ,1);
             robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT_SECOND ,1);
         }
+    }
+    public void releasePixel(double heading)
+    {
+        holdHeading(TURN_SPEED,heading,0.5);
+        robot.SetPosition(RobotHardware_apollo.DriveMotors.DUMP_SERVO, RobotHardware_apollo.SERVO_POS.DUMP_SERVO_OPEN.Pos);
+        linearOpMode.sleep(1000);
+        driveLeft(DRIVE_SPEED,7,heading);
+        holdHeading(TURN_SPEED,heading,1);
+        robot.SetPosition(RobotHardware_apollo.DriveMotors.DUMP_SERVO, RobotHardware_apollo.SERVO_POS.DUMP_SERVO_CLOSE.Pos);
+        holdHeading(TURN_SPEED,heading,1);
     }
     public boolean TestEncoders()
     {

@@ -132,8 +132,9 @@ public class RobotHardware_apollo {
         ARM_SERVO_DUMP_POS (0.4594),
         ARM_SERVO_DUMP_POS_AUTO_DRIVE (0.44),
         ARM_SERVO_GARD_OPEN_POS (0.5),
-        ARM_SERVO_GARD_CLOSE_POS (0.7194),
-        ARM_SERVO_GARD_OPEN_CLOSE_POS (0.5454);
+        //ARM_SERVO_GARD_CLOSE_POS (0.7194),
+        ARM_SERVO_GARD_CLOSE_POS (0.9),
+        ARM_SERVO_GARD_OPEN_CLOSE_POS (0.66);
 
         public Double Pos;
 

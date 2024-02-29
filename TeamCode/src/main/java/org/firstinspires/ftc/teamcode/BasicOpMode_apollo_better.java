@@ -719,12 +719,12 @@ public class BasicOpMode_apollo_better extends OpMode {
 
                     try
                     {
-                        Thread.sleep(600);
+                        //Thread.sleep(400);
                     }  catch (Exception e)
                     {
                         Log.d(TAG_COLLECTION_THREAD, "catch exception: " + e.toString());
                     }
-                    robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_CLOSE_POS.Pos);
+                   // robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_CLOSE_POS.Pos);
                 }
                 else if(robot.armServoGardState == RobotHardware_apollo.ArmServoGardState.OPEN_CLOSE)
                 {
@@ -738,9 +738,17 @@ public class BasicOpMode_apollo_better extends OpMode {
                     //armServoGardState = ArmServoGardState.CLOSE;
                     robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_CLOSE_POS.Pos);
                 }
-                robot.armServoState = RobotHardware_apollo.ArmServoState.DUMP;
+
                 if (robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO) != RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS.Pos)
                 {
+                    try
+                    {
+                        Thread.sleep(100);
+                        }  catch (Exception e)
+                    {
+                        Log.d(TAG_COLLECTION_THREAD, "catch exception: " + e.toString());
+                    }
+                    robot.armServoState = RobotHardware_apollo.ArmServoState.DUMP;
                     robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS.Pos);
                 }
 

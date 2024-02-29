@@ -219,7 +219,7 @@ public class AutoDriveApollo_RedRight_Parameter extends LinearOpMode {
             case RIGHT:
             {
                 //driveStraight(DRIVE_SPEED,10,heading);
-                autoDriveApollo.driveRight(autoDriveApollo.DRIVE_SPEED,1,heading);
+                autoDriveApollo.driveLeft(autoDriveApollo.DRIVE_SPEED,3,heading);
                 autoDriveApollo.robot.SetPosition(RobotHardware_apollo.DriveMotors.DUMP_SERVO, RobotHardware_apollo.SERVO_POS.DUMP_SERVO_OPEN.Pos);
                 sleep(2000);
                 autoDriveApollo.driveLeft(autoDriveApollo.DRIVE_SPEED,14,heading);
@@ -319,15 +319,12 @@ public class AutoDriveApollo_RedRight_Parameter extends LinearOpMode {
                  */
                 break;
             case RIGHT:
-                autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED,-10,0);
+                autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED,-24 + 10,0);
                 autoDriveApollo.holdHeading(autoDriveApollo.TURN_SPEED,0,0.5);
-                autoDriveApollo.driveLeft(autoDriveApollo.DRIVE_SPEED,15,0);
-                autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED,-17,0);
-                autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED,5,0);
-                autoDriveApollo.holdHeading(autoDriveApollo.DRIVE_SPEED,0,1);
                 autoDriveApollo.driveLeft(autoDriveApollo.DRIVE_SPEED,10,0);
-                autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED,-10,0);
                 autoDriveApollo.holdHeading(autoDriveApollo.TURN_SPEED,0,0.5);
+                autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED,-13,0);
+                autoDriveApollo.driveLeft(autoDriveApollo.DRIVE_SPEED,10,0);
 
                 break;
             case LEFT:
@@ -342,7 +339,7 @@ public class AutoDriveApollo_RedRight_Parameter extends LinearOpMode {
     {
         autoDriveApollo.time.reset();
         detectedPropPos = autoDriveApollo.detectProp();
-        //autoDriveApollo.robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION, 1);
+        autoDriveApollo.robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION, 1);
         driveToProb_red(detectedPropPos);
         dropPixelAtLine_red(0, detectedPropPos);
         autoDriveApollo.turnToHeadingApollo(autoDriveApollo.TURN_SPEED,-270);

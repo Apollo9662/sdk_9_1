@@ -123,18 +123,18 @@ public class RobotHardware_apollo {
     PLANE_STATE plane_state;
     public enum SERVO_POS {
         DUMP_SERVO_CLOSE (0.9),
-        LIFT_STOP_SERVO_OPEN(0.85),
-        LIFT_STOP_SERVO_CLOSE(0.10),
+        LIFT_STOP_SERVO_OPEN(1.0),
+        LIFT_STOP_SERVO_CLOSE(0.89),
         DUMP_SERVO_OPEN (0.32),
         PLANE_SERVO_CLOSE (0.9),
         PLANE_SERVO_OPEN (0.25),
         ARM_SERVO_COLLECT_POS (1.0),
         ARM_SERVO_DUMP_POS (0.4594),
         ARM_SERVO_DUMP_POS_AUTO_DRIVE (0.44),
-        ARM_SERVO_GARD_OPEN_POS (0.5),
+        ARM_SERVO_GARD_OPEN_POS (0.66),
         //ARM_SERVO_GARD_CLOSE_POS (0.7194),
-        ARM_SERVO_GARD_CLOSE_POS (0.9),
-        ARM_SERVO_GARD_OPEN_CLOSE_POS (0.66);
+        ARM_SERVO_GARD_CLOSE_POS (1.0),
+        ARM_SERVO_GARD_OPEN_CLOSE_POS (0.86);
 
         public Double Pos;
 

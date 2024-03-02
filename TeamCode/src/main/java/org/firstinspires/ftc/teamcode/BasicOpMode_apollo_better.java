@@ -81,11 +81,11 @@ public class BasicOpMode_apollo_better extends OpMode {
     boolean pressLift = false;
     boolean pressDrive = false;
     boolean LIFT_IsBusy;
-    final int FIRST_LIFT = 1000;
+    final int FIRST_LIFT = 460;
     double servoCurrentPosition;
-    final int SECOND_LIFT = 1710;
-    final int THIRD_LIFT = 2565;
-    final int FOURTH_LIFT = 2141;
+    final int SECOND_LIFT = 880;
+    final int THIRD_LIFT = 1630;
+    final int FOURTH_LIFT = 2000;
     int liftMaxHight = 3420;
     final double POWER_LIFT = 1;
     double liftPower = 0;
@@ -353,7 +353,7 @@ public class BasicOpMode_apollo_better extends OpMode {
         {
             if (controlMod == true)
             {
-                robot_Ftclib.driveRobotCentric(strafeSpeed/3, forwardSpeed/3, turnSpeed/3);
+                robot_Ftclib.driveRobotCentric(strafeSpeed/2, forwardSpeed/3, turnSpeed/3);
             }
             else
             {

@@ -156,7 +156,7 @@ public class AutoDriveApollo{
     // These constants define the desired driving/control characteristics
     // They can/should be tweaked to suit the specific robot drive train.
     public final double     DRIVE_SPEED             = 0.6;
-    public final double     DRIVE_SURF_SPEED        = 0.9 * 0.65;// Max driving speed for better distance accuracy.
+    //public final double     DRIVE_SURF_SPEED        = 0.9 * 0.65;// Max driving speed for better distance accuracy.
     public final double     TURN_SPEED              = 0.8 * 0.65;
     public final double     TURN_SPEED_FIX          = 0.4; // Max Turn speed to limit turn rate
     public static final double     HEADING_THRESHOLD       = 0.5;    // How close must the heading get to the target before moving to next step.
@@ -755,7 +755,7 @@ public class AutoDriveApollo{
     }
     public void getReadyForTeleOp(double heading)
     {
-        linearOpMode.sleep(1000);
+        //linearOpMode.sleep(1000);
         robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.LIFT, dropPixelPosSecond);
         robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT, DcMotor.RunMode.RUN_TO_POSITION);
         robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT, 1);
@@ -783,12 +783,6 @@ public class AutoDriveApollo{
         robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_COLLECT_POS.Pos);
         linearOpMode.sleep(1000);
         goTo(0);
-        TimeOut.reset();
-        LIFT_IsBusy = robot.IsBusy(RobotHardware_apollo.DriveMotors.LIFT);
-        while ((LIFT_IsBusy) && (TimeOut.seconds() < TimeOutSec))
-        {
-            LIFT_IsBusy = robot.IsBusy(RobotHardware_apollo.DriveMotors.LIFT);
-        }
         //sleep(1000);
         driveStraight(DRIVE_SPEED,4,heading);
     }
@@ -822,7 +816,7 @@ public class AutoDriveApollo{
             detectedPropPos = robotHuskLens.detectPropPos();
         }
         if (TimeOut.seconds() > propDetectionTimeOut) {
-            detectedPropPos = HuskyLens_Apollo.PropPos.LEFT;
+            detectedPropPos = HuskyLens_Apollo.PropPos.UP;
             //Log
             linearOpMode.telemetry.addLine("failed the detect Prop");
             //sleep(1000);

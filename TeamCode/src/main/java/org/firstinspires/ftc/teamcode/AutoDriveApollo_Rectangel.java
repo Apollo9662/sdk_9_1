@@ -210,7 +210,7 @@ public class AutoDriveApollo_Rectangel extends LinearOpMode {
 
         //driveLeft(DRIVE_SPEED,10,0);
         //driveRight(DRIVE_SPEED,10,0);
-        driveRight(DRIVE_SPEED,-23,0);
+        driveStraight(DRIVE_SPEED,-23 * 3,0);
         holdHeading(TURN_SPEED,0,1);
         //turnToHeadingApollo(TURN_SPEED,90);
         //}

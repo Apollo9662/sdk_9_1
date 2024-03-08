@@ -86,7 +86,7 @@ import com.qualcomm.robotcore.util.Range;
  */
 
 @Autonomous(name="Apollo Autonomous Rectangel ", group="Apollo")
-//@Disabled
+@Disabled
 public class AutoDriveApollo_Rectangel extends LinearOpMode {
 
     /* Declare OpMode members. */

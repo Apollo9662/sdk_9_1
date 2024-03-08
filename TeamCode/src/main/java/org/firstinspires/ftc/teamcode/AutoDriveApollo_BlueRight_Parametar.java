@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 /**
@@ -82,7 +83,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
  */
 
 @Autonomous(name="Apollo Autonomous blue right", group="Apollo")
-//@Disabled
+@Disabled
 public class AutoDriveApollo_BlueRight_Parametar extends LinearOpMode {
 
     /* Declare OpMode members. */
@@ -218,7 +219,7 @@ public class AutoDriveApollo_BlueRight_Parametar extends LinearOpMode {
                 autoDriveApollo.turnToHeadingApollo(autoDriveApollo.TURN_SPEED,-90);
                 heading = -90;
                 //autoDriveApollo.driveLeft(autoDriveApollo.DRIVE_SPEED,3,heading);
-                autoDriveApollo.releasePixel(heading);
+                autoDriveApollo.releasePixel(heading,false);
                 //driveRight(DRIVE_SPEED,10,heading);
                 //holdHeading(TURN_SPEED,heading,1);
             }
@@ -243,6 +244,7 @@ public class AutoDriveApollo_BlueRight_Parametar extends LinearOpMode {
                 autoDriveApollo.holdHeading(autoDriveApollo.DRIVE_SPEED, heading, 0.5);
                 autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED, 7, heading);
             }
+            break;
             case UP: {
                 autoDriveApollo.driveRight(autoDriveApollo.DRIVE_SPEED,7,heading);
                 autoDriveApollo.holdHeading(autoDriveApollo.TURN_SPEED,heading,0.5);

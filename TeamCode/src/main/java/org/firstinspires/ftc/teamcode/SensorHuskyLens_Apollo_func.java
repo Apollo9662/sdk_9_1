@@ -60,7 +60,7 @@ import java.util.concurrent.TimeUnit;
 public class SensorHuskyLens_Apollo_func extends LinearOpMode {
 
     private final int READ_PERIOD = 1;
-    double middle = 180;
+    int middle = 170;
     private HuskyLens huskyLens;
     private boolean isPress = false;
     private enum HuskyLens_State {TAG_RECOGNITION,

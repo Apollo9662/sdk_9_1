@@ -12,9 +12,9 @@ public class HuskyLens_Apollo
 {
     final String TAG_HUSKYLENS = "HuskyLens_Apollo";
     //private final int READ_PERIOD = 1;
-    int middle = 170;
-    int maxTop = 130;
-    int minTop = 70;
+    int middle = 185;
+    int maxTop = 240;
+    int minTop = 140;
     private boolean isPress = false;
     private enum HuskyLens_State {TAG_RECOGNITION,
         COLOR_RECOGNITION};

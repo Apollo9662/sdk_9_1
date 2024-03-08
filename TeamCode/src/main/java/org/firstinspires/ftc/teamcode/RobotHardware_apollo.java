@@ -129,12 +129,12 @@ public class RobotHardware_apollo {
         PLANE_SERVO_CLOSE (0.9),
         PLANE_SERVO_OPEN (0.25),
         ARM_SERVO_COLLECT_POS (1.0),
-        ARM_SERVO_DUMP_POS (0.4594),
+        ARM_SERVO_DUMP_POS (0.4389),
         ARM_SERVO_DUMP_POS_AUTO_DRIVE (0.44),
-        ARM_SERVO_GARD_OPEN_POS (0.66),
+        ARM_SERVO_GARD_OPEN_POS (0.45),
         //ARM_SERVO_GARD_CLOSE_POS (0.7194),
-        ARM_SERVO_GARD_CLOSE_POS (1.0),
-        ARM_SERVO_GARD_OPEN_CLOSE_POS (0.86);
+        ARM_SERVO_GARD_CLOSE_POS (0.5),
+        ARM_SERVO_GARD_OPEN_CLOSE_POS (0.48);
 
         public Double Pos;
 
@@ -293,7 +293,7 @@ public class RobotHardware_apollo {
             case LIFT:
             {
                 lift.setPower(Power);
-                liftSecond.setPower(Power);
+                //liftSecond.setPower(Power);
             }
             break;
             case LIFT_SECOND:
@@ -339,7 +339,7 @@ public class RobotHardware_apollo {
             case LIFT:
             {
                 lift.setVelocity(Power);
-                liftSecond.setVelocity(Power);
+                //liftSecond.setVelocity(Power);
             }
             break;
             case LIFT_SECOND:

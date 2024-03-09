@@ -149,17 +149,17 @@ public class AutoDriveApollo_BlueLeft_Parameter extends LinearOpMode{
             {
                 case UP:
                 {
-                    autoDriveApollo.driveLeft(autoDriveApollo.DRIVE_SPEED,27,heading);
+                    autoDriveApollo.driveLeft(autoDriveApollo.DRIVE_SPEED + 0.2,27,heading);
                 }
                 break;
                 case RIGHT:
                 {
-                    autoDriveApollo.driveLeft(autoDriveApollo.DRIVE_SPEED,32,heading);
+                    autoDriveApollo.driveLeft(autoDriveApollo.DRIVE_SPEED,32 + 0.2,heading);
                 }
                 break;
                 case LEFT:
                 {
-                    autoDriveApollo.driveLeft(autoDriveApollo.DRIVE_SPEED,19,heading);
+                    autoDriveApollo.driveLeft(autoDriveApollo.DRIVE_SPEED + 0.2,19,heading);
                 }
                 break;
             }
@@ -200,9 +200,6 @@ public class AutoDriveApollo_BlueLeft_Parameter extends LinearOpMode{
                 //driveRight(DRIVE_SPEED,2,0);4
                 autoDriveApollo.turnToHeading(autoDriveApollo.TURN_SPEED,-90);
                 heading = -90;
-                autoDriveApollo.robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION,1);
-                autoDriveApollo.holdHeading(autoDriveApollo.TURN_SPEED,-90,0.5);
-                autoDriveApollo.robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION,0);
                 autoDriveApollo.releasePixel(heading , false);
                 autoDriveApollo.holdHeading(autoDriveApollo.TURN_SPEED,heading,0.5);
                 /*
@@ -236,13 +233,10 @@ public class AutoDriveApollo_BlueLeft_Parameter extends LinearOpMode{
         }
     }
     public void driveToBackStage_blueLeft(double heading, HuskyLens_Apollo.PropPos probPos) {
-        if (probPos == HuskyLens_Apollo.PropPos.RIGHT)
-        {
-            autoDriveApollo.getLiftToDumpPos();
-            autoDriveApollo.holdHeading(autoDriveApollo.TURN_SPEED,heading,0.5);
-        }
         switch (probPos) {
             case RIGHT: {
+                autoDriveApollo.getLiftToDumpPos();
+                autoDriveApollo.holdHeading(autoDriveApollo.TURN_SPEED,heading,0.5);
                 //autoDriveApollo.driveRight(autoDriveApollo.DRIVE_SURF_SPEED, 3, heading);
                 //autoDriveApollo.holdHeading(autoDriveApollo.DRIVE_SPEED, heading, 0.5);
                 autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED, 15, heading);
@@ -251,7 +245,6 @@ public class AutoDriveApollo_BlueLeft_Parameter extends LinearOpMode{
             case LEFT: {
                 //driveLeft(DRIVE_SPEED, 18, heading);
                 autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED,14,heading);
-                autoDriveApollo.holdHeading(autoDriveApollo.TURN_SPEED, heading, 0.5);
                 autoDriveApollo.getLiftToDumpPos();
                 //driveStraight(DRIVE_SPEED,2,heading);
                 //driveStraight(DRIVE_SPEED, 3, heading);
@@ -335,7 +328,7 @@ public class AutoDriveApollo_BlueLeft_Parameter extends LinearOpMode{
                 break;
             case LEFT:
                 autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED,-4,0);
-                autoDriveApollo.holdHeading(autoDriveApollo.DRIVE_SPEED,0,0.5);
+                //autoDriveApollo.holdHeading(autoDriveApollo.DRIVE_SPEED,0,0.5);
                 autoDriveApollo.driveRight(autoDriveApollo.DRIVE_SPEED,14,0);
                 autoDriveApollo.holdHeading(autoDriveApollo.DRIVE_SPEED,0,0.5);
                 autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED,-19,0);
@@ -364,7 +357,7 @@ public class AutoDriveApollo_BlueLeft_Parameter extends LinearOpMode{
         sleep(500);
         autoDriveApollo.getReadyForTeleOp(-90);
         Park_blueLeft(-90,detectedPropPos, autoDriveApollo.Park);
-        Log.d(autoDriveApollo.TAG_TIME, "the final time is " + autoDriveApollo.time.milliseconds());
+        Log.d(autoDriveApollo.TAG_TIME, "the final time is " + autoDriveApollo.time.seconds());
     }
 
     /*

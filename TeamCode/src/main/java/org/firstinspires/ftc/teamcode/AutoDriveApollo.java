@@ -799,6 +799,7 @@ public class AutoDriveApollo{
     }
     public void getLiftToDumpPos()
     {
+        /*
         goTo(700);
         TimeOut.reset();
         LIFT_IsBusy = robot.IsBusy(RobotHardware_apollo.DriveMotors.LIFT);
@@ -807,10 +808,11 @@ public class AutoDriveApollo{
             LIFT_IsBusy = robot.IsBusy(RobotHardware_apollo.DriveMotors.LIFT);
         }
         robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT_SECOND,0);
-        robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS_AUTO_DRIVE.Pos);
-        linearOpMode.sleep(500);
+
+         */
         goTo(dropPixelPos);
         TimeOut.reset();
+        robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS_AUTO_DRIVE.Pos);
         LIFT_IsBusy = robot.IsBusy(RobotHardware_apollo.DriveMotors.LIFT);
         while ((LIFT_IsBusy) && (TimeOut.seconds() < TimeOutSec))
         {

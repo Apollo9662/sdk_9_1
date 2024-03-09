@@ -103,11 +103,11 @@ public class AutoDriveApollo{
     public double old_FRONT_RIGHT_DRIVE_Pos = 0;
     public double old_FRONT_LEFT_DRIVE_Pos = 0;
     public boolean LIFT_IsBusy;
-    public double propDetectionTimeOut = 1;
+    public double propDetectionTimeOut = 2;
     public boolean Park = true;
     public final int dropPixelPos = 460;
     public final int dropPixelPosSecond = dropPixelPos + 200;
-    public final String TAG_TIME = "time";
+    public final String TAG_TIME = "timer";
     public final String TAG_LIFT_TIME_OUT = "lift_time_out";
     public final String TAG_DRIVE = "drive";
 
@@ -757,10 +757,11 @@ public class AutoDriveApollo{
     {
         //linearOpMode.sleep(1000);
         driveStraight(DRIVE_SPEED - 0.2,-7,heading);
+        /*
         goTo(dropPixelPosSecond);
         TimeOut.reset();
         LIFT_IsBusy = robot.IsBusy(RobotHardware_apollo.DriveMotors.LIFT);
-        while ((LIFT_IsBusy) && (TimeOut.seconds() < TimeOutSec))
+        while ((LIFT_IsBusy) && (TimeOut.seconds() <= TimeOutSec))
         {
             LIFT_IsBusy = robot.IsBusy(RobotHardware_apollo.DriveMotors.LIFT);
         }
@@ -779,11 +780,18 @@ public class AutoDriveApollo{
         */
         robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_POS.Pos);
         robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_COLLECT_POS.Pos);
-        linearOpMode.sleep(1000);
+        if (!Park)
+        {
+            driveStraight(DRIVE_SPEED,4,heading);
+        }
+        else
+        {
+            linearOpMode.sleep(1000);
+        }
         goTo(0);
         //sleep(1000);
-        driveStraight(DRIVE_SPEED,4,heading);
-        while ((LIFT_IsBusy) && (TimeOut.seconds() < TimeOutSec))
+        TimeOut.reset();
+        while ((LIFT_IsBusy) && (TimeOut.seconds() <= TimeOutSec))
         {
             LIFT_IsBusy = robot.IsBusy(RobotHardware_apollo.DriveMotors.LIFT);
         }
@@ -817,6 +825,7 @@ public class AutoDriveApollo{
             detectedPropPos = robotHuskLens.detectPropPos();
         }
         if (TimeOut.seconds() > propDetectionTimeOut) {
+            Log.d(TAG_TIME,"timeOut sec is " + TimeOut.seconds());
             detectedPropPos = HuskyLens_Apollo.PropPos.LEFT;
             //Log
             linearOpMode.telemetry.addLine("failed the detect Prop");

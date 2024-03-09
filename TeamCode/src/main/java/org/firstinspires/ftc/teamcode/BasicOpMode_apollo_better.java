@@ -1142,11 +1142,8 @@ public class BasicOpMode_apollo_better extends OpMode {
         }
         private void goToPosAndMoveArm(int Pos) throws InterruptedException {
             goTo(Pos);
-            if (robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO) != RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS.Pos)
-            {
-                robot.armServoState = RobotHardware_apollo.ArmServoState.DUMP;
-                robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS.Pos);
-            }
+            robot.armServoState = RobotHardware_apollo.ArmServoState.DUMP;
+            robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS.Pos);
         }
     }
 

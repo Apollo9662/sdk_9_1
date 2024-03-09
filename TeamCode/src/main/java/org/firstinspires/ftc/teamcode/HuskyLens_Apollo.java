@@ -28,6 +28,7 @@ public class HuskyLens_Apollo
     private HuskyLens huskyLens_apollo;
     private PropColor propColor;
     private int propId;
+    private int propId2 = 0;
     public boolean initHuskyLens(HuskyLens huskyLens, PropColor findPropColor)
     {
         huskyLens_apollo = huskyLens;
@@ -56,9 +57,11 @@ public class HuskyLens_Apollo
         if (propColor == PropColor.RED)
         {
             propId = 2;
+            //propId2 = 2;
         }
         else {
             propId = 1;
+            //propId2 = 4;
         }
         return intSucceeded;
     }
@@ -75,16 +78,15 @@ public class HuskyLens_Apollo
                 // id2 is the red one, id1 is the blue one.
                 Log.d(TAG_HUSKYLENS, "the id of block" + i + "is" + blocks[i].id);
                 Log.d(TAG_HUSKYLENS, "The position of block " + i + " is [x,y] (" + blocks[i].x + "," + blocks[i].y + ")");
-                if (propId == blocks[i].id)
+                Log.d(TAG_HUSKYLENS,  ", top " + blocks[i].top + " , left " + blocks[i].left);
+                if ((propId == blocks[i].id))
                 {
-                    if (propColor == PropColor.RED)
-                    {
-                        if (((blocks[i].x < middle) && (blocks[i].top < maxTop)) && blocks[i].top > minTop)
+                        if ((blocks[i].x < middle) && (blocks[i].top < maxTop) && (blocks[i].top > minTop))
                         {
                             propPos = PropPos.UP;
                             Log.d(TAG_HUSKYLENS, "The Prop is on line Up");
                         }
-                        else if (((blocks[i].x > middle)  && (blocks[i].top < maxTop)) && blocks[i].top > minTop)
+                        else if ((blocks[i].x > middle)  && (blocks[i].top < maxTop) && (blocks[i].top > minTop))
                         {
                             propPos = PropPos.RIGHT;
                             Log.d(TAG_HUSKYLENS, "The Prop is on line Right");
@@ -94,30 +96,6 @@ public class HuskyLens_Apollo
                             propPos = null;
                             Log.d(TAG_HUSKYLENS, "No Prop was recognized");
                         }
-                    }
-                    else if (propColor == PropColor.BLUE)
-                    {
-                        if (((blocks[i].x < middle) && (blocks[i].top < maxTop)) && blocks[i].top > minTop)
-                        {
-                            propPos = PropPos.UP;
-                            Log.d(TAG_HUSKYLENS, "The Prop is on line Up");
-                        }
-                        else if (((blocks[i].x > middle)  && (blocks[i].top < maxTop)) && blocks[i].top > minTop)
-                        {
-                            propPos = PropPos.RIGHT;
-                            Log.d(TAG_HUSKYLENS, "The Prop is on line Right");
-                        }
-                        else
-                        {
-                            propPos = null;
-                            Log.d(TAG_HUSKYLENS, "No Prop was recognized");
-                        }
-                    }
-                    else
-                    {
-                        propPos = null;
-                        Log.d(TAG_HUSKYLENS, "You Forgot To Init the Prop Color");
-                    }
                 }
             }
         }

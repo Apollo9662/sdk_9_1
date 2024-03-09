@@ -82,7 +82,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
  *  Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Apollo Autonomous blue right", group="Apollo")
+@Autonomous(name="blue right", group="Apollo")
 @Disabled
 public class AutoDriveApollo_BlueRight_Parametar extends LinearOpMode {
 
@@ -119,6 +119,10 @@ public class AutoDriveApollo_BlueRight_Parametar extends LinearOpMode {
     public void runOpMode() {
         autoDriveApollo.init(HuskyLens_Apollo.PropColor.BLUE);
         telemetry.addLine("robot finish init");
+
+        //Log
+        telemetry.addLine("failed the detect Prop");
+        //sleep(1000);
         telemetry.update();
 
         waitForStart();

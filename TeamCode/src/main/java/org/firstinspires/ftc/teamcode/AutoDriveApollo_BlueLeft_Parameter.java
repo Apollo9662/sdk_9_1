@@ -81,7 +81,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
  *  Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
 
-@Autonomous(name="Apollo Autonomous blue left", group="Apollo")
+@Autonomous(name="blue left", group="Apollo")
 //@Disabled
 public class AutoDriveApollo_BlueLeft_Parameter extends LinearOpMode{
 
@@ -163,9 +163,9 @@ public class AutoDriveApollo_BlueLeft_Parameter extends LinearOpMode{
                 }
                 break;
             }
-            autoDriveApollo.holdHeading(autoDriveApollo.TURN_SPEED,heading,0.5);
-            autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED  -0.2,18,heading);
-            autoDriveApollo.driveLeft(autoDriveApollo.DRIVE_SPEED - 0.2,20,heading);
+            //autoDriveApollo.holdHeading(autoDriveApollo.TURN_SPEED,heading,0.5);
+            autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED  -0.2,22,heading);
+            autoDriveApollo.driveLeft(autoDriveApollo.DRIVE_SPEED - 0.2,2,heading);
         }
 
     }
@@ -179,6 +179,7 @@ public class AutoDriveApollo_BlueLeft_Parameter extends LinearOpMode{
                 autoDriveApollo.turnToHeadingApollo(autoDriveApollo.TURN_SPEED,-90);
                 heading = -90;
                 autoDriveApollo.driveLeft(autoDriveApollo.DRIVE_SPEED,2,heading);
+                autoDriveApollo.robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION,1);
                 /*
                 autoDriveApollo.driveRight(autoDriveApollo.DRIVE_SPEED,6,heading);
                 autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED,5,heading);
@@ -186,6 +187,7 @@ public class AutoDriveApollo_BlueLeft_Parameter extends LinearOpMode{
 
                  */
                 autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED,-4,0);
+                autoDriveApollo.robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION,0);
                 autoDriveApollo.releasePixel(heading,true);
                 autoDriveApollo.holdHeading(autoDriveApollo.TURN_SPEED,heading,0.5);
                 //driveStraight(DRIVE_SPEED,-15,heading);
@@ -198,6 +200,9 @@ public class AutoDriveApollo_BlueLeft_Parameter extends LinearOpMode{
                 //driveRight(DRIVE_SPEED,2,0);4
                 autoDriveApollo.turnToHeading(autoDriveApollo.TURN_SPEED,-90);
                 heading = -90;
+                autoDriveApollo.robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION,1);
+                autoDriveApollo.holdHeading(autoDriveApollo.TURN_SPEED,-90,0.5);
+                autoDriveApollo.robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION,0);
                 autoDriveApollo.releasePixel(heading , false);
                 autoDriveApollo.holdHeading(autoDriveApollo.TURN_SPEED,heading,0.5);
                 /*
@@ -219,6 +224,7 @@ public class AutoDriveApollo_BlueLeft_Parameter extends LinearOpMode{
                 autoDriveApollo.turnToHeadingApollo(autoDriveApollo.TURN_SPEED,180);
                 autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED,3,0);
                 heading = 180;
+                autoDriveApollo.driveRight(autoDriveApollo.DRIVE_SPEED,2.5,heading);
                 autoDriveApollo.releasePixel(heading,false);
                 autoDriveApollo.holdHeading(autoDriveApollo.TURN_SPEED,heading,0.5);
                 autoDriveApollo.driveLeft(autoDriveApollo.DRIVE_SPEED,10,heading);
@@ -313,6 +319,7 @@ public class AutoDriveApollo_BlueLeft_Parameter extends LinearOpMode{
     public void driveToProb_blueLeft(HuskyLens_Apollo.PropPos probPos)
     {
         autoDriveApollo.MoterTime.reset();
+        autoDriveApollo.robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION,1);
         switch (probPos)
         {
             case UP:
@@ -344,6 +351,7 @@ public class AutoDriveApollo_BlueLeft_Parameter extends LinearOpMode{
                 break;
         }
         autoDriveApollo.holdHeading(autoDriveApollo.DRIVE_SPEED,0,0.5);
+        autoDriveApollo.robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION,0);
     }
     public void runAutoDrive_blueLeft()
     {

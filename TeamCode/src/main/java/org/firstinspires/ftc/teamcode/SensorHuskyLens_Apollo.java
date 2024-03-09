@@ -32,6 +32,8 @@ THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 package org.firstinspires.ftc.teamcode;
 
+import android.util.Log;
+
 import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -62,7 +64,10 @@ import java.util.concurrent.TimeUnit;
 public class SensorHuskyLens_Apollo extends LinearOpMode {
 
     private final int READ_PERIOD = 1;
-
+    int middle = 185;
+    int maxTop = 240;
+    int minTop = 140;
+    final String TAG_HUSKYLENS = "HuskyLens_Apollo";
     private HuskyLens huskyLens;
     private boolean isPress = false;
     private enum HuskyLens_State {TAG_RECOGNITION,
@@ -80,7 +85,7 @@ public class SensorHuskyLens_Apollo extends LinearOpMode {
          * what is happening on the Driver Station telemetry.  Typical applications
          * would not likely rate limit.
          */
-        Deadline rateLimit = new Deadline(READ_PERIOD, TimeUnit.SECONDS);
+        Deadline rateLimit = new Deadline(READ_PERIOD, TimeUnit.MILLISECONDS);
 
         /*
          * Immediately expire so that the first time through we'll do the read.
@@ -179,8 +184,11 @@ public class SensorHuskyLens_Apollo extends LinearOpMode {
             telemetry.addData("Block count", blocks.length);
             for (int i = 0; i < blocks.length; i++) {
                 telemetry.addLine( "id=" + blocks[i].id + " size: " + blocks[i].width + "x" + blocks[i].height + " position: " + blocks[i].x + "," + blocks[i].y);
-                telemetry.addLine( "id=" + blocks[i].id +  " , top " + blocks[i].top + " , left " + blocks[i].left);
+                telemetry.addLine(  ", top " + blocks[i].top + " , left " + blocks[i].left);
                 telemetry.addData("Block", blocks[i].toString());
+                Log.d(TAG_HUSKYLENS, "the id of block" + i + "is" + blocks[i].id);
+                Log.d(TAG_HUSKYLENS, "The position of block " + i + " is [x,y] (" + blocks[i].x + "," + blocks[i].y + ")");
+                Log.d(TAG_HUSKYLENS,  ", top " + blocks[i].top + " , left " + blocks[i].left);
             }
             telemetry.update();
         }
@@ -197,13 +205,17 @@ public class SensorHuskyLens_Apollo extends LinearOpMode {
         {
             for (int i = 0; i < blocks.length; i++)
             {
-                if ((blocks[i].x > 88) && (blocks[i].x < 160) &&(blocks[i].y > 40) && (blocks[i].y < 60))
+                if (((blocks[i].x < middle) && (blocks[i].top < maxTop)) && blocks[i].top > minTop)
                 {
-                    telemetry.addLine("The Prop is on line Up");
+                    Log.d(TAG_HUSKYLENS, "The Prop is on line Up");
                 }
-                else if ((blocks[i].x > 217) && (blocks[i].x < 244) && (blocks[i].y < 192) && (blocks[i].y > 105))
+                else if (((blocks[i].x > middle)  && (blocks[i].top < maxTop)) && blocks[i].top > minTop)
                 {
-                    telemetry.addLine("The Prop is on line right");
+                    Log.d(TAG_HUSKYLENS, "The Prop is on line Right");
+                }
+                else
+                {
+                    Log.d(TAG_HUSKYLENS, "No Prop was recognized");
                 }
             }
 

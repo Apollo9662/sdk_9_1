@@ -116,11 +116,13 @@ public class AutoDriveApollo{
     public final int dropPixelPos = 460;
     public final int dropPixelPosSecond = dropPixelPos + 200;
     public final String TAG_TIME = "timer";
-    public final String TAG_TIME_PROP_DETECTION = "prop detection timer";
+    public final String TAG_TIME_PROP_DETECTION = "prop_detection_timer";
     public final String TAG_LIFT_TIME_OUT = "lift_time_out";
     public final String TAG_DRIVE = "drive";
 
     HuskyLens_Apollo.PropPos detectedPropPos = null;
+    boolean initIMU = true;
+    boolean initHuskyLens = true;
     //enum ProbPos{UP,
                 //RIGHT,
                 //LEFT}
@@ -189,8 +191,7 @@ public class AutoDriveApollo{
     }
     //@Override
     public void init(HuskyLens_Apollo.PropColor propColor) {
-        boolean initIMU = robot.init(linearOpMode.hardwareMap,true,true);
-        boolean initHuskyLens;
+        initIMU = robot.init(linearOpMode.hardwareMap,true,true);
         switch (propColor)
         {
             case RED:
@@ -852,18 +853,41 @@ public class AutoDriveApollo{
     }
     public HuskyLens_Apollo.PropPos detectPropInInit()
     {
-        propDetectionPosArray[propDetectionPosArrayIndex] = robotHuskLens.detectPropPos();
+        detectedPropPos = robotHuskLens.detectPropPos();
+        if (detectedPropPos == null)
+        {
+            detectedPropPos = HuskyLens_Apollo.PropPos.LEFT;
+        }
+        propDetectionPosArray[propDetectionPosArrayIndex] = detectedPropPos;
+        if (initIMU == false)
+        {
+            linearOpMode.telemetry.addLine("failed to init Imu (stop!!!!!!!!!!!)");
+        }
+        else
+        {
+            linearOpMode.telemetry.addLine("int Imu succeeded");
+        }
+        if (initHuskyLens == false)
+        {
+            linearOpMode.telemetry.addLine("failed to init Husky lens");
+        }
+        else
+        {
+            linearOpMode.telemetry.addLine("int Husky lens succeeded ");
+        }
+        linearOpMode.telemetry.addLine("robot finish init");
         linearOpMode.telemetry.addData("Prop pos is ", detectedPropPos.toString());
         linearOpMode.telemetry.update();
         numOfRuns += 1;
+        Log.d(TAG_TIME_PROP_DETECTION,"num of runs" + numOfRuns +
+                " prop pos Index is " + propDetectionPosArrayIndex +
+                " prop pos is " + propDetectionPosArray[propDetectionPosArrayIndex] +
+                " num of blocks is " + robotHuskLens.numOfBlocks);
         propDetectionPosArrayIndex += 1;
         if (propDetectionPosArrayIndex == propPosArraySize)
         {
             propDetectionPosArrayIndex = 0;
         }
-        Log.d(TAG_TIME_PROP_DETECTION,"num of runs" + numOfRuns +
-                " prop pos Index is " + propDetectionPosArrayIndex +
-                " prop pos is " + propDetectionPosArray[propDetectionPosArrayIndex]);
         return (detectedPropPos);
     }
 

@@ -15,6 +15,7 @@ public class HuskyLens_Apollo
     int middle = 185;
     int maxTop = 240;
     int minTop = 120;
+    public int numOfBlocks;
     private boolean isPress = false;
     private enum HuskyLens_State {TAG_RECOGNITION,
         COLOR_RECOGNITION};
@@ -70,6 +71,7 @@ public class HuskyLens_Apollo
         if(blocks.length != 0)
         {
             Log.d(TAG_HUSKYLENS, " The number of blocks is " + blocks.length);
+            numOfBlocks = blocks.length;
             for (int i = 0; (i < blocks.length) && (propPos == null); i++)
             {
                 //play with top or left

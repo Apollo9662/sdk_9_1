@@ -119,8 +119,11 @@ public class AutoDriveApollo_BlueLeft_Parameter extends LinearOpMode{
         autoDriveApollo.init(HuskyLens_Apollo.PropColor.BLUE);
         telemetry.addLine("robot finish init");
         telemetry.update();
-
-        waitForStart();
+        while (opModeInInit())
+        {
+            detectedPropPos = autoDriveApollo.detectPropInInit();
+            sleep(100);
+        }
         autoDriveApollo.MoterTime.reset();
         autoDriveApollo.TimeOut.reset();
 
@@ -154,7 +157,7 @@ public class AutoDriveApollo_BlueLeft_Parameter extends LinearOpMode{
                 break;
                 case RIGHT:
                 {
-                    autoDriveApollo.driveLeft(autoDriveApollo.DRIVE_SPEED,32 + 0.2,heading);
+                    autoDriveApollo.driveLeft(autoDriveApollo.DRIVE_SPEED + 0.2,33 ,heading);
                 }
                 break;
                 case LEFT:
@@ -221,7 +224,7 @@ public class AutoDriveApollo_BlueLeft_Parameter extends LinearOpMode{
                 autoDriveApollo.turnToHeadingApollo(autoDriveApollo.TURN_SPEED,180);
                 autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED,3,180);
                 heading = 180;
-                autoDriveApollo.driveRight(autoDriveApollo.DRIVE_SPEED,2.5,heading);
+                autoDriveApollo.driveRight(autoDriveApollo.DRIVE_SPEED,3.5,heading);
                 autoDriveApollo.releasePixel(heading,false);
                 autoDriveApollo.holdHeading(autoDriveApollo.TURN_SPEED,heading,0.5);
                 autoDriveApollo.driveLeft(autoDriveApollo.DRIVE_SPEED,10,heading);
@@ -349,7 +352,7 @@ public class AutoDriveApollo_BlueLeft_Parameter extends LinearOpMode{
     public void runAutoDrive_blueLeft()
     {
         autoDriveApollo.time.reset();
-        detectedPropPos = autoDriveApollo.detectProp();
+        //detectedPropPos = autoDriveApollo.detectProp();
         //autoDriveApollo.robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION, 1);
         driveToProb_blueLeft(detectedPropPos);
         dropPixelAtLine_blueLeft(detectedPropPos);

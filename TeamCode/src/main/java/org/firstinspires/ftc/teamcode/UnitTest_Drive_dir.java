@@ -104,7 +104,7 @@ public class UnitTest_Drive_dir extends OpMode {
 
      */
     final String TAG_DRIVE = "Drive";
-    public static double Power = 0.6;
+    public static double Power = 0.3625;
     @Override
     public void init() {
         robot.init(hardwareMap,true,false);

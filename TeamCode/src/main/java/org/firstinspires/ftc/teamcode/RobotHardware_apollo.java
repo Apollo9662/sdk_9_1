@@ -79,6 +79,7 @@ public class RobotHardware_apollo {
     enum ArmServoState{COLLECT,
         DUMP}
     ArmServoState armServoState;
+    double headingOffset = 0;
     /* Declare OpMode members. */
     private LinearOpMode myOpMode = null;   // gain access to methods in the calling OpMode.
     // Define Motor and Servo objects  (Make them private so they can't be accessed externally)
@@ -698,11 +699,14 @@ public class RobotHardware_apollo {
         backLeftDrive.setZeroPowerBehavior(myZeroPowerBehavior);
     }
     public double getImuRawHeading() {
-        Orientation angles   = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        Orientation angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES);
+        angles.firstAngle -= headingOffset;
         return angles.firstAngle;
     }
-
-
+    public void ResetYaw()
+    {
+        headingOffset = getImuRawHeading();
+    }
 }
 
 

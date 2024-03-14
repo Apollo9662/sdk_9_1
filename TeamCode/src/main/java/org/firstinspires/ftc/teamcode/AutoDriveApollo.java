@@ -91,13 +91,20 @@ import com.qualcomm.robotcore.util.Range;
 public class AutoDriveApollo{
 
     /* Declare OpMode members. */
+    int propPosArraySize = 5;
+    public HuskyLens_Apollo.PropPos[] propDetectionPosArray = new HuskyLens_Apollo.PropPos[propPosArraySize];
+    int numOfRuns = 0;
+    int propDetectionPosArrayIndex = 0;
     public ElapsedTime time = new ElapsedTime();
+    public ElapsedTime runTime = new ElapsedTime();
     public ElapsedTime TimeOut = new ElapsedTime();
     public ElapsedTime TurnTimeOut = new ElapsedTime();
     public ElapsedTime MoterTime = new ElapsedTime();
     boolean encodersAreWorking;
     public double TimeOutSec = 3;
     public double TurnTimeOutSec = 5;
+    public double TimeToPark = 27;
+    public double TimeToDropPixel = 18;
     public double old_BACK_LEFT_DRIVE_Pos = 0;
     public double old_BACK_RIGHT_DRIVE_Pos = 0;
     public double old_FRONT_RIGHT_DRIVE_Pos = 0;
@@ -105,9 +112,11 @@ public class AutoDriveApollo{
     public boolean LIFT_IsBusy;
     public double propDetectionTimeOut = 2;
     public boolean Park = true;
+    public boolean DropPixelAtBack = false;
     public final int dropPixelPos = 460;
     public final int dropPixelPosSecond = dropPixelPos + 200;
     public final String TAG_TIME = "timer";
+    public final String TAG_TIME_PROP_DETECTION = "prop detection timer";
     public final String TAG_LIFT_TIME_OUT = "lift_time_out";
     public final String TAG_DRIVE = "drive";
 
@@ -115,7 +124,7 @@ public class AutoDriveApollo{
     //enum ProbPos{UP,
                 //RIGHT,
                 //LEFT}
-    //ProbPos probPos;
+    //ProbPos probPos;q
     //private DcMotor         frontLeftDrive   = null;
     //private DcMotor         frontRightDrive  = null;
     //private DcMotor         backLeftDrive    = null;
@@ -155,6 +164,7 @@ public class AutoDriveApollo{
 
     // These constants define the desired driving/control characteristics
     // They can/should be tweaked to suit the specific robot drive train.
+    public final double MIN_SIDE_DRIVE_POWER = 0.4;
     public final double     DRIVE_SPEED             = 0.6;
     //public final double     DRIVE_SURF_SPEED        = 0.9 * 0.65;// Max driving speed for better distance accuracy.
     public final double     TURN_SPEED              = 0.8 * 0.65;
@@ -603,9 +613,48 @@ public class AutoDriveApollo{
     /**
      * This method takes separate drive (fwd/rev) and turn (right/left) requests,
      * combines them, and applies the appropriate speed commands to the left and right wheel motors.
-     * @param drive forward motor speed
-     * @param turn  clockwise turning motor speed.
+     //* @param drive forward motor speed
+     //* @param turn  clockwise turning motor speed.
      */
+    public void calcMoveRobotPower(double backLeftPower,double backRightPower,double frontLeftPower,double frontRightPower, double turn)
+    {
+        double maxFront = Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower));
+        double maxBack = Math.max (Math.abs(backLeftPower), Math.abs(backRightPower));
+        double max = Math.max(maxFront, maxBack);
+
+        if (max > 1) {
+            backLeftPower /= max;
+            backRightPower /= max;
+            frontLeftPower /= max;
+            frontRightPower /= max;
+        }
+        if (Math.abs(backLeftPower) < MIN_SIDE_DRIVE_POWER)
+        {
+            backLeftPower = 0.4 * (Math.abs(backLeftPower) / backLeftPower);
+        }
+        if (Math.abs(backRightPower) < MIN_SIDE_DRIVE_POWER)
+        {
+            backRightPower = 0.4 * (Math.abs(backRightPower) / backRightPower);
+        }
+        if (Math.abs(frontLeftPower) < MIN_SIDE_DRIVE_POWER)
+        {
+            frontLeftPower = 0.4 * (Math.abs(frontLeftPower) / frontLeftPower);
+        }
+        if (Math.abs(frontRightPower) < MIN_SIDE_DRIVE_POWER)
+        {
+            frontRightPower = 0.4 * (Math.abs(frontRightPower) / frontRightPower);
+        }
+        robot.SetPower(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE, backLeftPower);
+        robot.SetPower(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE, backRightPower);
+        robot.SetPower(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE, frontRightPower);
+        robot.SetPower(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE, frontLeftPower);
+        Log.d(TAG_DRIVE, "Wheel turn is " + turn);
+        Log.d(TAG_DRIVE,"Wheel Speeds is; " +
+                " back Left Power is " + backLeftPower +
+                " back Right Power is " + backRightPower +
+                " front Right Power" + frontRightPower +
+                " front Left Power" + frontLeftPower);
+    }
     public void moveRobot(double drive, double turn) {
         driveSpeed = drive;     // save this value as a class member so it can be used by telemetry.
         turnSpeed  = turn;      // save this value as a class member so it can be used by telemetry.
@@ -645,26 +694,9 @@ public class AutoDriveApollo{
         double frontRightPower = drive - turn;
         double frontLeftPower = drive - turn;
 
-        double maxFront = Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower));
-        double maxBack = Math.max (Math.abs(backLeftPower), Math.abs(backRightPower));
-        double max = Math.max(maxFront, maxBack);
+        calcMoveRobotPower(backLeftPower,backRightPower,frontLeftPower,frontRightPower,turn);
 
-        if (max > 1) {
-            backLeftPower /= max;
-            backRightPower /= max;
-            frontLeftPower /= max;
-            frontRightPower /= max;
-        }
-        Log.d(TAG_DRIVE, "Wheel turn is " + turn);
-        Log.d(TAG_DRIVE,"Wheel Speeds is; " +
-                " back Left Power is " + backLeftPower +
-                " back Right Power is " + backRightPower +
-                " front Right Power" + frontRightPower +
-                " front Left Power" + frontLeftPower);
-        robot.SetPower(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE, backLeftPower);
-        robot.SetPower(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE, backRightPower);
-        robot.SetPower(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE, frontRightPower);
-        robot.SetPower(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE, frontLeftPower);
+
     }
     public void moveRobotLeft(double drive, double turn) {
         driveSpeed = drive;     // save this value as a class member so it can be used by telemetry.
@@ -675,26 +707,7 @@ public class AutoDriveApollo{
         double frontRightPower = drive + turn;
         double frontLeftPower = drive + turn;
 
-        double maxFront = Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower));
-        double maxBack = Math.max (Math.abs(backLeftPower), Math.abs(backRightPower));
-        double max = Math.max(maxFront, maxBack);
-
-        if (max > 1) {
-            backLeftPower /= max;
-            backRightPower /= max;
-            frontLeftPower /= max;
-            frontRightPower /= max;
-        }
-        Log.d(TAG_DRIVE, "Wheel turn is " + turn);
-        Log.d(TAG_DRIVE,"Wheel Speeds is; " +
-                " back Left Power is " + backLeftPower +
-                " back Right Power is " + backRightPower +
-                " front Right Power" + frontRightPower +
-                " front Left Power" + frontLeftPower);
-        robot.SetPower(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE, backLeftPower);
-        robot.SetPower(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE, backRightPower);
-        robot.SetPower(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE, frontRightPower);
-        robot.SetPower(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE, frontLeftPower);
+        calcMoveRobotPower(backLeftPower,backRightPower,frontLeftPower,frontRightPower,turn);
     }
 
     /**
@@ -835,6 +848,22 @@ public class AutoDriveApollo{
         }
         linearOpMode.telemetry.addData("Prop pos is ", detectedPropPos.toString());
         linearOpMode.telemetry.update();
+        return (detectedPropPos);
+    }
+    public HuskyLens_Apollo.PropPos detectPropInInit()
+    {
+        propDetectionPosArray[propDetectionPosArrayIndex] = robotHuskLens.detectPropPos();
+        linearOpMode.telemetry.addData("Prop pos is ", detectedPropPos.toString());
+        linearOpMode.telemetry.update();
+        numOfRuns += 1;
+        propDetectionPosArrayIndex += 1;
+        if (propDetectionPosArrayIndex == propPosArraySize)
+        {
+            propDetectionPosArrayIndex = 0;
+        }
+        Log.d(TAG_TIME_PROP_DETECTION,"num of runs" + numOfRuns +
+                " prop pos Index is " + propDetectionPosArrayIndex +
+                " prop pos is " + propDetectionPosArray[propDetectionPosArrayIndex]);
         return (detectedPropPos);
     }
 

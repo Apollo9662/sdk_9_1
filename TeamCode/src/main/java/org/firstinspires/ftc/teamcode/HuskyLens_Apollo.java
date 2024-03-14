@@ -14,7 +14,7 @@ public class HuskyLens_Apollo
     //private final int READ_PERIOD = 1;
     int middle = 185;
     int maxTop = 240;
-    int minTop = 140;
+    int minTop = 120;
     private boolean isPress = false;
     private enum HuskyLens_State {TAG_RECOGNITION,
         COLOR_RECOGNITION};
@@ -57,11 +57,9 @@ public class HuskyLens_Apollo
         if (propColor == PropColor.RED)
         {
             propId = 2;
-            //propId2 = 2;
         }
         else {
             propId = 1;
-            //propId2 = 4;
         }
         return intSucceeded;
     }

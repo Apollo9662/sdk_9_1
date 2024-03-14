@@ -99,8 +99,9 @@ public class BasicOpMode_apollo_better extends OpMode {
     final double LIFT_TIMEOUT_SEC = 5;
     final double LIFT_TIMEOUT_STAY_SEC = 2;
     boolean controlMod = false;
-    boolean upSideDownMod = false;
+    public static boolean upSideDownMod = false;
     boolean fieldCentricDrive = false;
+    double heading;
     boolean doNotGoDownMod = false;
     collectThread collectThread = new collectThread();
     LiftThread liftTread = new LiftThread();
@@ -136,8 +137,8 @@ public class BasicOpMode_apollo_better extends OpMode {
 
         //old_ARM_SERVO_DUMP_POS = robot.ARM_SERVO_DUMP_POS;
         old_ARM_SERVO_DUMP_POS = RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS.Pos;
-        robot.init(hardwareMap,false,false);
-        boolean initIMU =  robot_Ftclib.init(hardwareMap, true);
+        boolean initIMU = robot.init(hardwareMap,false,true);
+        robot_Ftclib.init(hardwareMap, false);
         if (initIMU == false)
         {
             telemetry.addLine("failed to init Imu (stop!!!!!!!!!!!)");
@@ -289,6 +290,10 @@ public class BasicOpMode_apollo_better extends OpMode {
         telemetry.addData("gard current pos is " , "(%.4f)" , robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO));
         telemetry.addData("arm current Pos is " , "(%.4f)" , robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO));
         telemetry.addLine("field Centric Drive stats is " + fieldCentricDrive);
+        if (fieldCentricDrive)
+        {
+            telemetry.addLine("heading is " + heading);
+        }
         telemetry.addLine("control Mod stats is " + controlMod);
         telemetry.addLine("up Side Down Mod stats is " + upSideDownMod);
         telemetry.addLine("lift stop servo stat is " + liftStopStat);
@@ -327,10 +332,10 @@ public class BasicOpMode_apollo_better extends OpMode {
         }
         if ((gamepadEx1.wasJustPressed(GamepadKeys.Button.BACK)) && (!gamepadEx1.isDown(GamepadKeys.Button.B)) && (!gamepadEx1.isDown(GamepadKeys.Button.A)))
         {
-            robot_Ftclib.ResetYaw();
+            robot.ResetYaw();
             fieldCentricDrive = !fieldCentricDrive;
         }
-        double heading = robot_Ftclib.getYaw();
+        heading = robot.getImuRawHeading();
         if (gamepad1.y)
         {
             if(!pressDrive)
@@ -347,28 +352,48 @@ public class BasicOpMode_apollo_better extends OpMode {
         }
         if(gamepad1.a)
         {
-            robot_Ftclib.driveRobotCentric(0, -0.25, 0);
+            robot_Ftclib .driveRobotCentric(0,
+                    -0.25,
+                    0);
         }
         else if (!fieldCentricDrive)
         {
             if (controlMod == true)
             {
-                robot_Ftclib.driveRobotCentric(strafeSpeed/2, forwardSpeed/3, turnSpeed/3);
+                robot_Ftclib.driveRobotCentric(
+                        strafeSpeed/2,
+                        forwardSpeed/3,
+                        turnSpeed/3);
             }
             else
             {
-                robot_Ftclib.driveRobotCentric(strafeSpeed, forwardSpeed, turnSpeed);
+                robot_Ftclib.driveRobotCentric(
+                        strafeSpeed,
+                        forwardSpeed,
+                        turnSpeed);
             }
         }
         else
         {
             if (controlMod == true)
             {
-                robot_Ftclib.driveFieldCentric(strafeSpeed/2, forwardSpeed/2, turnSpeed/2,heading);
+                robot_Ftclib.driveFieldCentric(
+                        strafeSpeed/2,
+                        forwardSpeed/3,
+                        turnSpeed/3,
+                        heading
+
+                );
             }
             else
             {
-                robot_Ftclib.driveFieldCentric(strafeSpeed, forwardSpeed, turnSpeed,heading);
+                robot_Ftclib.driveFieldCentric(
+                        strafeSpeed,
+                        forwardSpeed,
+                        turnSpeed,
+                        heading
+
+                );
             }
         }
     }
@@ -1029,7 +1054,7 @@ public class BasicOpMode_apollo_better extends OpMode {
                     double currentPosition = robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT);
                     if (currentPosition < THIRD_LIFT)
                     {
-                        Thread.sleep(1000);
+                        Thread.sleep(500);
                     }
                 }  catch (Exception e)
                 {

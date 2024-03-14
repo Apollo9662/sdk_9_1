@@ -219,7 +219,7 @@ public class AutoDriveApollo_BlueLeft_Parameter extends LinearOpMode{
             {
                 autoDriveApollo.turnToHeadingApollo(autoDriveApollo.TURN_SPEED,90);
                 autoDriveApollo.turnToHeadingApollo(autoDriveApollo.TURN_SPEED,180);
-                autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED,3,0);
+                autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED,3,180);
                 heading = 180;
                 autoDriveApollo.driveRight(autoDriveApollo.DRIVE_SPEED,2.5,heading);
                 autoDriveApollo.releasePixel(heading,false);

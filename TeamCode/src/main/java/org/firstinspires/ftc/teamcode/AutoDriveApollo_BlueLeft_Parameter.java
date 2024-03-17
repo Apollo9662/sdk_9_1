@@ -119,19 +119,9 @@ public class AutoDriveApollo_BlueLeft_Parameter extends LinearOpMode{
         autoDriveApollo.init(HuskyLens_Apollo.PropColor.BLUE);
         telemetry.addLine("robot finish init");
         telemetry.update();
-        while (opModeInInit())
-        {
-            detectedPropPos = autoDriveApollo.detectPropInInit();
-            sleep(100);
-        }
-        autoDriveApollo.MoterTime.reset();
-        autoDriveApollo.TimeOut.reset();
 
-        //driveLeft(DRIVE_SPEED,10,0);
-        //driveRight(DRIVE_SPEED,10,0);
+        detectedPropPos = autoDriveApollo.runPropDetection();
 
-        //if (opModeIsActive() == true)
-        //{
         runAutoDrive_blueLeft();
 
 
@@ -354,6 +344,7 @@ public class AutoDriveApollo_BlueLeft_Parameter extends LinearOpMode{
         autoDriveApollo.time.reset();
         //detectedPropPos = autoDriveApollo.detectProp();
         //autoDriveApollo.robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION, 1);
+        autoDriveApollo.dropCollection();
         driveToProb_blueLeft(detectedPropPos);
         dropPixelAtLine_blueLeft(detectedPropPos);
         driveToBackStage_blueLeft(-90, detectedPropPos);

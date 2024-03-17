@@ -12,9 +12,11 @@ public class HuskyLens_Apollo
 {
     final String TAG_HUSKYLENS = "HuskyLens_Apollo";
     //private final int READ_PERIOD = 1;
-    int middle = 185;
-    int maxTop = 240;
-    int minTop = 120;
+    public int middle = 185;
+    public int maxTop = 60;
+    public int minTop = 25;
+    public int maxWidth = 60;
+    public int maxHeight = 60;
     public int numOfBlocks;
     private boolean isPress = false;
     private enum HuskyLens_State {TAG_RECOGNITION,
@@ -57,7 +59,7 @@ public class HuskyLens_Apollo
         Log.d(TAG_HUSKYLENS ,"find prop color " + propColor.toString());
         if (propColor == PropColor.RED)
         {
-            propId = 2;
+            propId = 1;
         }
         else {
             propId = 1;
@@ -79,8 +81,11 @@ public class HuskyLens_Apollo
                 Log.d(TAG_HUSKYLENS, "the id of block" + i + "is" + blocks[i].id);
                 Log.d(TAG_HUSKYLENS, "The position of block " + i + " is [x,y] (" + blocks[i].x + "," + blocks[i].y + ")");
                 Log.d(TAG_HUSKYLENS,  ", top " + blocks[i].top + " , left " + blocks[i].left);
+                Log.d(TAG_HUSKYLENS,  ", width " + blocks[i].width + " , height " + blocks[i].height);
                 if ((propId == blocks[i].id))
                 {
+                    if ((blocks[i].height <= maxHeight) && (blocks[i].width <= maxWidth))
+                    {
                         if ((blocks[i].x < middle) && (blocks[i].top < maxTop) && (blocks[i].top > minTop))
                         {
                             propPos = PropPos.UP;
@@ -96,6 +101,8 @@ public class HuskyLens_Apollo
                             propPos = null;
                             Log.d(TAG_HUSKYLENS, "No Prop was recognized");
                         }
+                    }
+
                 }
             }
         }

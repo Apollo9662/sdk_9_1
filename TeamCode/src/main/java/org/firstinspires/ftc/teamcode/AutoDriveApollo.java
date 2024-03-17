@@ -93,7 +93,10 @@ public class AutoDriveApollo{
     /* Declare OpMode members. */
     int propPosArraySize = 5;
     public HuskyLens_Apollo.PropPos[] propDetectionPosArray = new HuskyLens_Apollo.PropPos[propPosArraySize];
+    public HuskyLens_Apollo.PropPos[] propOdderArray = new HuskyLens_Apollo.PropPos[propPosArraySize];
+    public int[] propBiggerArray = new int[propPosArraySize];
     int numOfRuns = 0;
+    int indexOfArray = 0;
     int propDetectionPosArrayIndex = 0;
     public ElapsedTime time = new ElapsedTime();
     public ElapsedTime runTime = new ElapsedTime();
@@ -104,7 +107,7 @@ public class AutoDriveApollo{
     public double TimeOutSec = 3;
     public double TurnTimeOutSec = 5;
     public double TimeToPark = 27;
-    public double TimeToDropPixel = 18;
+    public double TimeToDropPixel = 15;
     public double old_BACK_LEFT_DRIVE_Pos = 0;
     public double old_BACK_RIGHT_DRIVE_Pos = 0;
     public double old_FRONT_RIGHT_DRIVE_Pos = 0;
@@ -112,7 +115,7 @@ public class AutoDriveApollo{
     public boolean LIFT_IsBusy;
     public double propDetectionTimeOut = 2;
     public boolean Park = true;
-    public boolean DropPixelAtBack = false;
+    public boolean DropPixelAtBack = true;
     public final int dropPixelPos = 460;
     public final int dropPixelPosSecond = dropPixelPos + 200;
     public final String TAG_TIME = "timer";
@@ -121,6 +124,7 @@ public class AutoDriveApollo{
     public final String TAG_DRIVE = "drive";
 
     HuskyLens_Apollo.PropPos detectedPropPos = null;
+    HuskyLens_Apollo.PropPos oldDetectedPropPos = null;
     boolean initIMU = true;
     boolean initHuskyLens = true;
     //enum ProbPos{UP,
@@ -834,6 +838,23 @@ public class AutoDriveApollo{
         }
         robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT_SECOND,0);
     }
+    public HuskyLens_Apollo.PropPos runPropDetection()
+    {
+        while (linearOpMode.opModeInInit())
+        {
+            detectedPropPos = detectPropInInit();
+            linearOpMode.sleep(300);
+        }
+        detectedPropPos = calcPropPos();
+        if(detectedPropPos == null)
+        {
+            Log.d(TAG_TIME_PROP_DETECTION,"failed to detect prop at init");
+            linearOpMode.telemetry.addLine("failed to detect prop at init");
+            linearOpMode.telemetry.update();
+            detectedPropPos = detectProp();
+        }
+        return (detectedPropPos);
+    }
     public HuskyLens_Apollo.PropPos detectProp()
     {
         TimeOut.reset();
@@ -890,7 +911,80 @@ public class AutoDriveApollo{
         }
         return (detectedPropPos);
     }
-
+    public HuskyLens_Apollo.PropPos calcPropPos()
+    {
+        HuskyLens_Apollo.PropPos PropPos = null;
+        indexOfArray = propDetectionPosArray.length - 1;
+        for (int i = propDetectionPosArrayIndex; i < propDetectionPosArray.length; i++)
+        {
+            propOdderArray[indexOfArray] = propDetectionPosArray[i];
+            indexOfArray--;
+        }
+        for (int i = 0; i < propDetectionPosArrayIndex; i++)
+        {
+            propOdderArray[indexOfArray] = propDetectionPosArray[i];
+            indexOfArray--;
+        }
+        oldDetectedPropPos = propOdderArray[0];
+        indexOfArray = 0;
+        for (int i = 0;i < propDetectionPosArray.length;i++)
+        {
+            if (propOdderArray[i] == oldDetectedPropPos)
+            {
+                propBiggerArray[indexOfArray]++;
+            }
+            else
+            {
+                break;
+            }
+        }
+        oldDetectedPropPos = propOdderArray[1];
+        indexOfArray = 1;
+        for (int i = 1;i < propDetectionPosArray.length;i++)
+        {
+            if (propOdderArray[i] == oldDetectedPropPos)
+            {
+                propBiggerArray[indexOfArray]++;
+            }
+            else
+            {
+                break;
+            }
+        }
+        oldDetectedPropPos = propOdderArray[2];
+        indexOfArray = 2;
+        for (int i = 2;i < propDetectionPosArray.length;i++)
+        {
+            if (propOdderArray[i] == oldDetectedPropPos)
+            {
+                propBiggerArray[indexOfArray]++;
+            }
+            else
+            {
+                break;
+            }
+        }
+        if (propBiggerArray[0] >= 3)
+        {
+            PropPos = propOdderArray[0];
+        }
+        else if((propBiggerArray[1] >= 3) && (propBiggerArray[0] == 1))
+        {
+            PropPos = propOdderArray[propBiggerArray[0]];
+        }
+        /*
+        else if(propBiggerArray[propBiggerArray[2]] >= 3)
+        {
+            PropPos = propOdderArray[propBiggerArray[1]];
+        }
+         */
+        else
+        {
+            PropPos = null;
+        }
+        Log.d(TAG_TIME_PROP_DETECTION,"prop pos after calc is " + PropPos);
+        return (PropPos);
+    }
 
     public void goTo(int Pos)
     {
@@ -921,6 +1015,12 @@ public class AutoDriveApollo{
         //holdHeading(TURN_SPEED,heading,1);
         robot.SetPosition(RobotHardware_apollo.DriveMotors.DUMP_SERVO, RobotHardware_apollo.SERVO_POS.DUMP_SERVO_CLOSE.Pos);
         //holdHeading(TURN_SPEED,heading,1);
+    }
+    public void dropCollection()
+    {
+        robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION,-1);
+        linearOpMode.sleep(500);
+        robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION,0);
     }
     public boolean TestEncoders()
     {

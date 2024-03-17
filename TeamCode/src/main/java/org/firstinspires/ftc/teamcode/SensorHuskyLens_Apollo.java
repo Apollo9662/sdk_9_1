@@ -63,10 +63,13 @@ import java.util.concurrent.TimeUnit;
 //@Disabled
 public class SensorHuskyLens_Apollo extends LinearOpMode {
 
+    HuskyLens_Apollo huskyLens_apollo = new HuskyLens_Apollo();
     private final int READ_PERIOD = 1;
-    int middle = 185;
-    int maxTop = 240;
-    int minTop = 140;
+    int middle = huskyLens_apollo.middle;
+    int maxTop = huskyLens_apollo.maxTop;
+    int minTop = huskyLens_apollo.minTop;
+    public int maxWidth = huskyLens_apollo.maxWidth;
+    public int maxHeight = huskyLens_apollo.maxHeight;
     final String TAG_HUSKYLENS = "HuskyLens_Apollo";
     private HuskyLens huskyLens;
     private boolean isPress = false;
@@ -185,10 +188,12 @@ public class SensorHuskyLens_Apollo extends LinearOpMode {
             for (int i = 0; i < blocks.length; i++) {
                 telemetry.addLine( "id=" + blocks[i].id + " size: " + blocks[i].width + "x" + blocks[i].height + " position: " + blocks[i].x + "," + blocks[i].y);
                 telemetry.addLine(  ", top " + blocks[i].top + " , left " + blocks[i].left);
-                telemetry.addData("Block", blocks[i].toString());
+                telemetry.addLine(", width " + blocks[i].width + " , height " + blocks[i].height);
+                //telemetry.addData("Block", blocks[i].toString());
                 Log.d(TAG_HUSKYLENS, "the id of block" + i + "is" + blocks[i].id);
                 Log.d(TAG_HUSKYLENS, "The position of block " + i + " is [x,y] (" + blocks[i].x + "," + blocks[i].y + ")");
                 Log.d(TAG_HUSKYLENS,  ", top " + blocks[i].top + " , left " + blocks[i].left);
+                Log.d(TAG_HUSKYLENS,  ", width " + blocks[i].width + " , height " + blocks[i].height);
             }
             telemetry.update();
         }
@@ -205,18 +210,22 @@ public class SensorHuskyLens_Apollo extends LinearOpMode {
         {
             for (int i = 0; i < blocks.length; i++)
             {
-                if (((blocks[i].x < middle) && (blocks[i].top < maxTop)) && blocks[i].top > minTop)
+                if ((blocks[i].height <= maxHeight) && (blocks[i].width <= maxWidth))
                 {
-                    Log.d(TAG_HUSKYLENS, "The Prop is on line Up");
+                    if ((blocks[i].x < middle) && (blocks[i].top < maxTop) && (blocks[i].top > minTop))
+                    {
+                        Log.d(TAG_HUSKYLENS, "The Prop is on line Up");
+                    }
+                    else if ((blocks[i].x > middle)  && (blocks[i].top < maxTop) && (blocks[i].top > minTop))
+                    {
+                        Log.d(TAG_HUSKYLENS, "The Prop is on line Right");
+                    }
+                    else
+                    {
+                        Log.d(TAG_HUSKYLENS, "No Prop was recognized");
+                    }
                 }
-                else if (((blocks[i].x > middle)  && (blocks[i].top < maxTop)) && blocks[i].top > minTop)
-                {
-                    Log.d(TAG_HUSKYLENS, "The Prop is on line Right");
-                }
-                else
-                {
-                    Log.d(TAG_HUSKYLENS, "No Prop was recognized");
-                }
+
             }
 
         }

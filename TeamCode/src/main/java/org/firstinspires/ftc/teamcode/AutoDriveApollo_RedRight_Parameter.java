@@ -31,6 +31,8 @@ package org.firstinspires.ftc.teamcode;
 
 import android.util.Log;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -123,13 +125,12 @@ public class AutoDriveApollo_RedRight_Parameter extends LinearOpMode {
     @Override
     public void runOpMode() {
         autoDriveApollo.init(HuskyLens_Apollo.PropColor.RED);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.addLine("robot finish init");
         telemetry.update();
-        while (opModeInInit())
-        {
-            detectedPropPos = autoDriveApollo.detectPropInInit();
-            sleep(100);
-        }
+
+        detectedPropPos = autoDriveApollo.runPropDetection();
+
         runAutoDrive_redRight();
         //}
         //driveStraight(DRIVE_SPEED, 23 * 2, 0 );
@@ -201,7 +202,7 @@ public class AutoDriveApollo_RedRight_Parameter extends LinearOpMode {
                 //driveLeft(DRIVE_SPEED,3,heading);
 
                  */
-                autoDriveApollo.robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION,1);
+                autoDriveApollo.robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION,0.1);
                 autoDriveApollo.driveLeft(autoDriveApollo.DRIVE_SPEED - 0.2,6,0);
                 autoDriveApollo.robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION,0);
                 autoDriveApollo .holdHeading(autoDriveApollo.TURN_SPEED,0 , 0.5);
@@ -332,7 +333,7 @@ public class AutoDriveApollo_RedRight_Parameter extends LinearOpMode {
     public void driveToProb_redRight(HuskyLens_Apollo.PropPos propPos)
     {
         autoDriveApollo.MoterTime.reset();
-        autoDriveApollo.robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION,1);
+        autoDriveApollo.robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION,0.1);
         switch (propPos)
         {
             case UP:
@@ -377,6 +378,7 @@ public class AutoDriveApollo_RedRight_Parameter extends LinearOpMode {
         autoDriveApollo.time.reset();
         //detectedPropPos = autoDriveApollo.detectProp();
         //autoDriveApollo.robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION, 1);
+        autoDriveApollo.dropCollection();
         driveToProb_redRight(detectedPropPos);
         dropPixelAtLine_redRight(0, detectedPropPos);
         autoDriveApollo.turnToHeadingApollo(autoDriveApollo.TURN_SPEED,-270);

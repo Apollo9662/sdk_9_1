@@ -31,6 +31,8 @@ package org.firstinspires.ftc.teamcode;
 
 import android.util.Log;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -83,7 +85,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
  */
 
 @Autonomous(name="blue right", group="Apollo")
-@Disabled
+//@Disabled
 public class AutoDriveApollo_BlueRight_Parametar extends LinearOpMode {
 
     /* Declare OpMode members. */
@@ -117,6 +119,7 @@ public class AutoDriveApollo_BlueRight_Parametar extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         autoDriveApollo.init(HuskyLens_Apollo.PropColor.BLUE);
         telemetry.addLine("robot finish init");
 
@@ -125,7 +128,8 @@ public class AutoDriveApollo_BlueRight_Parametar extends LinearOpMode {
         //sleep(1000);
         telemetry.update();
 
-        waitForStart();
+        detectedPropPos = autoDriveApollo.runPropDetection();
+        //detectedPropPos = HuskyLens_Apollo.PropPos.RIGHT;
         runAutoDrive_BlueRight();
         //}
         //driveStraight(DRIVE_SPEED, 23 * 2, 0 );
@@ -173,18 +177,19 @@ public class AutoDriveApollo_BlueRight_Parametar extends LinearOpMode {
                 break;
                 case RIGHT:
                 {
-                    autoDriveApollo.driveRight(autoDriveApollo.DRIVE_SPEED,40,heading);
-                    autoDriveApollo.driveLeft(autoDriveApollo.DRIVE_SPEED,5,heading);
+                    autoDriveApollo.driveRight(autoDriveApollo.DRIVE_SPEED,42,heading);
+                    autoDriveApollo.driveLeft(autoDriveApollo.DRIVE_SPEED,4,heading);
                 }
                 break;
             }
                 autoDriveApollo.holdHeading(autoDriveApollo.TURN_SPEED,heading,0.5);
                 if (autoDriveApollo.DropPixelAtBack)
                 {   while (autoDriveApollo.runTime.seconds() <= autoDriveApollo.TimeToDropPixel)
-                {
+                    {
 
-                }
+                    }
                     autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED,23 * 3,heading);
+                    autoDriveApollo.holdHeading(autoDriveApollo.TURN_SPEED,heading,0.5);
                 }
                 else
                 {
@@ -254,35 +259,26 @@ public class AutoDriveApollo_BlueRight_Parametar extends LinearOpMode {
 
     }
     public void driveToBackStage_BlueRight(double heading, HuskyLens_Apollo.PropPos probPos) {
+        switch (probPos) {
+            case RIGHT: {
+                //driveRight(DRIVE_SPEED, 7, heading);
+                autoDriveApollo.driveLeft(autoDriveApollo.DRIVE_SPEED,15,heading);
+            }
+            break;
+            case LEFT: {
+                autoDriveApollo.driveLeft(autoDriveApollo.DRIVE_SPEED,20,heading);
+            }
+            break;
+            case UP: {
+                autoDriveApollo.driveLeft(autoDriveApollo.DRIVE_SPEED,30,heading);
+            }
+            break;
+        }
         autoDriveApollo.getLiftToDumpPos();
         autoDriveApollo.holdHeading(autoDriveApollo.TURN_SPEED,heading,1);
         switch (probPos) {
             case RIGHT: {
-                //driveRight(DRIVE_SPEED, 7, heading);
-                autoDriveApollo.driveRight(autoDriveApollo.DRIVE_SPEED, 5, heading);
-                autoDriveApollo.holdHeading(autoDriveApollo.DRIVE_SPEED, heading, 0.5);
-                autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED, 6, heading);
-                autoDriveApollo.holdHeading(autoDriveApollo.DRIVE_SPEED, heading, 0.5);
-            }
-            break;
-            case LEFT: {
-                autoDriveApollo.driveLeft(autoDriveApollo.DRIVE_SPEED, 9, heading);
-                autoDriveApollo.holdHeading(autoDriveApollo.DRIVE_SPEED, heading, 0.5);
-                autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED, 7, heading);
-            }
-            break;
-            case UP: {
-                autoDriveApollo.driveRight(autoDriveApollo.DRIVE_SPEED,7,heading);
-                autoDriveApollo.holdHeading(autoDriveApollo.TURN_SPEED,heading,0.5);
                 autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED, 11, heading);
-                //driveLeft(DRIVE_SURF_SPEED,3,heading);
-            }
-            break;
-        }
-        autoDriveApollo.holdHeading(autoDriveApollo.DRIVE_SPEED, heading, 1);
-        switch (probPos) {
-            case RIGHT: {
-                //driveRight(DRIVE_SURF_SPEED, 6, heading);
             }
             break;
             case LEFT: {
@@ -351,15 +347,18 @@ public class AutoDriveApollo_BlueRight_Parametar extends LinearOpMode {
     public void runAutoDrive_BlueRight()
     {
         autoDriveApollo.time.reset();
-        detectedPropPos = autoDriveApollo.detectProp();
+        //detectedPropPos = autoDriveApollo.detectProp();
         //autoDriveApollo.robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION, 1);
+        autoDriveApollo.dropCollection();
         driveToProb_BlueRight(detectedPropPos);
         dropPixelAtLine_BlueRight(0, detectedPropPos);
         Park_BlueRight(-90,detectedPropPos, autoDriveApollo.Park);
         if (autoDriveApollo.DropPixelAtBack)
         {
-            driveToBackStage_BlueRight(-270, detectedPropPos);
-            autoDriveApollo.getReadyForTeleOp(-270);
+            autoDriveApollo.holdHeading(autoDriveApollo.TURN_SPEED,-90,0.5);
+            driveToBackStage_BlueRight(-90, detectedPropPos);
+            sleep(500);
+            autoDriveApollo.getReadyForTeleOp(-90);
             Log.d(autoDriveApollo.TAG_TIME, "the final time is " + autoDriveApollo.time.milliseconds());
         }
         }

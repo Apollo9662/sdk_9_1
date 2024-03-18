@@ -71,7 +71,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class RobotHardware_apollo {
 
-    private MecanumDrive mecanumDriveBase;
     public enum ArmServoGardState{OPEN,
         CLOSE,
         OPEN_CLOSE}
@@ -122,17 +121,17 @@ public class RobotHardware_apollo {
     };
     public PLANE_STATE plane_state;
     public enum SERVO_POS {
-        DUMP_SERVO_CLOSE (0.9),
+        //DUMP_SERVO_CLOSE (0.9),
+        DUMP_SERVO_CLOSE (0.89),
+        DUMP_SERVO_OPEN (0.32),
         LIFT_STOP_SERVO_OPEN(1.0),
         LIFT_STOP_SERVO_CLOSE(0.89),
-        DUMP_SERVO_OPEN (0.32),
         PLANE_SERVO_CLOSE (0.9),
         PLANE_SERVO_OPEN (0.25),
         ARM_SERVO_COLLECT_POS (1.0),
         ARM_SERVO_DUMP_POS (0.4389),
         ARM_SERVO_DUMP_POS_AUTO_DRIVE (0.44),
         ARM_SERVO_GARD_OPEN_POS (0.45),
-        //ARM_SERVO_GARD_CLOSE_POS (0.7194),
         ARM_SERVO_GARD_CLOSE_POS (0.5),
         ARM_SERVO_GARD_OPEN_CLOSE_POS (0.48);
 
@@ -253,18 +252,9 @@ public class RobotHardware_apollo {
         liftStopServo.setPosition(SERVO_POS.LIFT_STOP_SERVO_OPEN.Pos);
 
     }
-    public void ImuInit()
-    {
-        BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
-        parameters.angleUnit = BNO055IMU.AngleUnit.DEGREES;
-        parameters.mode = BNO055IMU.SensorMode.IMU;
-        parameters.accelUnit = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-    }
-
     public HuskyLens getHuskyLens() {
         return huskyLens;
     }
-
     public void SetPower(DriveMotors motor, double Power)
     {
         switch (motor)
@@ -628,7 +618,6 @@ public class RobotHardware_apollo {
     {
         switch (motor)
         {
-
             case TOUCH_SENSOR1:
                 return touchSensor1.isPressed();
             case BACK_RIGHT_DRIVE:

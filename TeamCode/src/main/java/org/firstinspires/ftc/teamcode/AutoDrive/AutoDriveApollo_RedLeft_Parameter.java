@@ -31,6 +31,8 @@ package org.firstinspires.ftc.teamcode.AutoDrive;
 
 import android.util.Log;
 
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -120,6 +122,7 @@ public class AutoDriveApollo_RedLeft_Parameter extends LinearOpMode{
     @Override
     public void runOpMode() {
         autoDriveApollo.init(HuskyLens_Apollo.PropColor.RED);
+        telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.addLine("robot finish init");
         telemetry.update();
 

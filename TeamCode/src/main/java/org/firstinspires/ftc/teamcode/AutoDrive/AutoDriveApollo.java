@@ -748,7 +748,7 @@ public class AutoDriveApollo{
         encodersAreWorking = TestEncoders();
         if (!encodersAreWorking)
         {
-            //linearOpMode.telemetry.addLine("stop!!!!! encoders are not working!!!!!!");
+            linearOpMode.telemetry.addLine("stop!!!!! encoders are not working!!!!!!");
         }
         //telemetry.addData("Angle Target:Current", "%5.2f:%5.0f", targetHeading, robotHeading);
         //telemetry.addData("Error:Steer",  "%5.1f:%5.1f", headingError, turnSpeed);
@@ -1012,7 +1012,9 @@ public class AutoDriveApollo{
             holdHeading(TURN_SPEED,heading,0.5);
         }
         robot.SetPosition(RobotHardware_apollo.DriveMotors.DUMP_SERVO, RobotHardware_apollo.SERVO_POS.DUMP_SERVO_OPEN.Pos);
-        linearOpMode.sleep(1000);
+        turnToHeadingApollo(TURN_SPEED,heading + 5);
+        turnToHeadingApollo(TURN_SPEED,heading - 5);
+        linearOpMode.sleep(2000);
         driveLeft(DRIVE_SPEED,7,heading);
         //holdHeading(TURN_SPEED,heading,1);
         robot.SetPosition(RobotHardware_apollo.DriveMotors.DUMP_SERVO, RobotHardware_apollo.SERVO_POS.DUMP_SERVO_CLOSE.Pos);
@@ -1045,9 +1047,8 @@ public class AutoDriveApollo{
             old_BACK_RIGHT_DRIVE_Pos = new_BACK_RIGHT_DRIVE_Pos;
             old_FRONT_RIGHT_DRIVE_Pos = new_FRONT_RIGHT_DRIVE_Pos;
             old_FRONT_LEFT_DRIVE_Pos = new_FRONT_LEFT_DRIVE_Pos;
-            MoterTime.seconds();
+            MoterTime.reset();
         }
-
         return (TestEncoders);
     }
 }

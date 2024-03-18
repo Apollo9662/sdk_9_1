@@ -159,44 +159,6 @@ public class BasicOpMode_apollo_better extends OpMode {
         //robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT, DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT, DcMotor.RunMode.RUN_USING_ENCODER);
 
-        //detection = new ConceptTensorFlowObjectDetection_Apollo(this);
-
-        // Initialize the hardware variables. Note that the strings used here as parameters
-        // to 'get' must correspond to the names assigned during the robot configuration
-        // step (using the FTC Robot Controller app on the phone).
-        /*
-        backLeftDrive = hardwareMap.get(DcMotor.class, "back_left_drive"); //0
-        frontLeftDrive = hardwareMap.get(DcMotor.class, "front_left_drive"); //1
-        backRightDrive = hardwareMap.get(DcMotor.class, "back_right_drive"); //2
-        frontRightDrive = hardwareMap.get(DcMotor.class, "front_right_drive");//3
-        rightCollection = hardwareMap.get(DcMotor.class, "right_collection");//0
-        leftCollection = hardwareMap.get(DcMotor.class, "left_collection");//1
-        lift = hardwareMap.get(DcMotor.class, "lift");//2
-        touchSensor1 = hardwareMap.get(TouchSensor.class, "sensor_touch1");
-        touchSensor2 = hardwareMap.get(TouchSensor.class, "sensor_touch2");
-        collectionServo = hardwareMap.get(Servo.class, "collection_servo");
-        collectionGardServo = hardwareMap.get(Servo.class, "collection_gard_servo");
-
-
-        // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
-        // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
-        // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
-        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
-        backRightDrive.setDirection(DcMotor.Direction.FORWARD);
-        frontRightDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightCollection.setDirection(DcMotorSimple.Direction.FORWARD);
-        leftCollection.setDirection(DcMotorSimple.Direction.REVERSE);
-        rightCollection.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        leftCollection.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        lift.setDirection(DcMotorSimple.Direction.REVERSE);
-        lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        lift.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        collectionServo.setDirection(Servo.Direction.FORWARD);
-        collectionGardServo.setDirection(Servo.Direction.FORWARD);
-
-
-         */
 
 
         telemetry.addData("Status", "Initialized");
@@ -215,80 +177,6 @@ public class BasicOpMode_apollo_better extends OpMode {
     public void loop() {
 
         drive();
-            /*
-            if(robot.IsPressed(RobotHardware_apollo.DriveMotors.TOUCH_SENSOR1) == true)
-            {
-                telemetry.addData("Touch Sensor1", "Is Pressed");
-            }
-            else
-            {
-                telemetry.addData("Touch Sensor1", "Is Not Pressed");
-            }
-            if(robot.IsPressed(RobotHardware_apollo.DriveMotors.TOUCH_SENSOR2) == true)
-            {                telemetry.addData("Touch Sensor2", "Is Pressed");
-            }
-            else
-            {
-                telemetry.addData
-                ("Touch Sensor2", "Is Not Pressed");
-            }
-
-             */
-        //boolean collectionSpeedMore = gamepad2.right_bumper;
-        //boolean collectionSpeedLess = gamepad2.left_bumper;
-
-        //  if (collectionSpeedMore == true)
-        {
-            // if (press == false)
-            {
-                //press = true;
-                // if (collectionSpeed < 1)
-                {
-                    // collectionSpeed += 0.1;
-                }
-            }
-        }
-
-        // if (collectionSpeedLess== true)
-        {
-            // if (press == false)
-            {
-                //press = true;
-                // if (collectionSpeed > 0.1)
-                {
-                    // collectionSpeed -= 0.1;
-                }
-            }
-        }
-
-        //if ((collectionSpeedLess == false) && (collectionSpeedMore == false))
-        {
-            //press = false;
-        }
-
-
-
-
-
-
-        // Show the elapsed game time and wheel power.
-
-        /*
-        if (true == inPosition )
-        {
-            telemetry.addLine("lift in position!!!");
-        }
-        //detection.detect();
-        telemetry.addData("ARM_SERVO_DUMP_POS is " , robot.ARM_SERVO_DUMP_POS);
-        telemetry.addData("Status", "Run Time: " + runtime.toString());
-        telemetry.addData("MAXH is","(%.2f)" + liftMaxHight);
-        //telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
-        //telemetry.addData("side power", "(%.2f)",sidePower);
-        telemetry.addData("lift Pos is ", "(%.2f)", robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT));
-        telemetry.addData("collectionSpeed", "(%.2f)", collectionSpeed);
-        telemetry.addData("servo pos is", "(%.2f)", robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO));
-         */
-        //telemetry.addLine("heading is " + robot_Ftclib.getRobotYawPitchRollAngles());
         telemetry.addData("gard stat is  " + robot.armServoGardState +  " gard Pos is " , "(%.4f)" , armGardServoPos);
         telemetry.addData("arm stat is  " + robot.armServoState + " arm Pos is " , "(%.4f)" , armServoPos);
         telemetry.addData("gard current pos is " , "(%.4f)" , robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO));
@@ -396,7 +284,6 @@ public class BasicOpMode_apollo_better extends OpMode {
                         forwardSpeed,
                         turnSpeed,
                         heading
-
                 );
             }
         }
@@ -420,51 +307,13 @@ public class BasicOpMode_apollo_better extends OpMode {
 
                 while (!isInterrupted())
                 {
-                    /*
-                    double collectionR = gamepad1.left_trigger; //R-reverse: pixel emission
-                    double collectionF = gamepad1.right_trigger; // F-forward: pixel collection
-                    boolean collectPixel = gamepad2.right_bumper;
-                    boolean dumpPixel =  gamepad2.left_bumper;
-                     */
-                    boolean collectionR = gamepad2.left_bumper; //R-reverse: pixel emission left_bumper
-                    double collectionF = gamepad2.left_trigger; // F-forward: pixel collection
+                    boolean pixelCollection = gamepad2.left_bumper;
+                    double pixelEmission = gamepad2.left_trigger;
                     boolean collectPixel = gamepad2.right_bumper;
                     float dumpPixel =  gamepad2.right_trigger;
-                    //float gatePositionOpenClose = gamepad2.left_trigger;
-                    //boolean gatePositionOpen = gamepad2.left_bumper;
-
-                    //boolean doNotGoDownSwitch = gamepad2.right_bumper;
-
-
-                    /*
-                    if (gatePositionOpenClose > 0.3)
-                    {
-                        robot.armServoGardState = RobotHardware_apollo.ArmServoGardState.OPEN_CLOSE;
-                        robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, robot.ARM_SERVO_GARD_OPEN_CLOSE_POS);
-                    }
-                    else if (gatePositionOpen == true)
-                    {
-                        robot.armServoGardState = RobotHardware_apollo.ArmServoGardState.OPEN;
-                        robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, robot.ARM_SERVO_GARD_OPEN_POS);
-                    }
-
-
-                     */
-
-
-
                     if (gamepadEx2.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON))
-                        {
-                        if (robot.plane_state == RobotHardware_apollo.PLANE_STATE.OPEN)
-                        {
-                            robot.plane_state = RobotHardware_apollo.PLANE_STATE.CLOSE;
-                            robot.SetPosition(RobotHardware_apollo.DriveMotors.PLANE_SERVO, RobotHardware_apollo.SERVO_POS.PLANE_SERVO_CLOSE.Pos);
-                        }
-                        else if(robot.plane_state == RobotHardware_apollo.PLANE_STATE.CLOSE)
-                        {
-                            robot.plane_state = RobotHardware_apollo.PLANE_STATE.OPEN;
-                            robot.SetPosition(RobotHardware_apollo.DriveMotors.PLANE_SERVO, RobotHardware_apollo.SERVO_POS.PLANE_SERVO_OPEN.Pos);
-                        }
+                    {
+                       lunchDrone();
                     }
                     if (gamepad1.dpad_down && gamepad1.back)
                     {
@@ -645,13 +494,11 @@ public class BasicOpMode_apollo_better extends OpMode {
                         servoStayInPos();
                         pressCollectionServo = false;
                     }
-
-
-                    if (collectionF != 0)
+                    if (pixelEmission != 0)
                     {
                         collectionMotor(collectionBackSpeed);
                     }
-                    else if (collectionR == true)
+                    else if (pixelCollection == true)
                     {
                         if (pressCollection == false)
                         {
@@ -675,8 +522,19 @@ public class BasicOpMode_apollo_better extends OpMode {
             }
 
         }
-
-
+        public void lunchDrone()
+        {
+            if (robot.plane_state == RobotHardware_apollo.PLANE_STATE.OPEN)
+            {
+                robot.plane_state = RobotHardware_apollo.PLANE_STATE.CLOSE;
+                robot.SetPosition(RobotHardware_apollo.DriveMotors.PLANE_SERVO, RobotHardware_apollo.SERVO_POS.PLANE_SERVO_CLOSE.Pos);
+            }
+            else if(robot.plane_state == RobotHardware_apollo.PLANE_STATE.CLOSE)
+            {
+                robot.plane_state = RobotHardware_apollo.PLANE_STATE.OPEN;
+                robot.SetPosition(RobotHardware_apollo.DriveMotors.PLANE_SERVO, RobotHardware_apollo.SERVO_POS.PLANE_SERVO_OPEN.Pos);
+            }
+        }
         public void servoStayInPos()
         {
             //if (robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT) >= 200)

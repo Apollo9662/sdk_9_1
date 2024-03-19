@@ -43,8 +43,10 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.RobotHardware_apollo.RobotHardware_apollo;
 import org.firstinspires.ftc.teamcode.RobotHardware_apollo.RobotHardware_apollo_FtcLib;
+import org.firstinspires.ftc.teamcode.RobotHardware_apollo.RobotMove_apollo;
 
 
 /**
@@ -131,17 +133,17 @@ public class BasicOpMode_apollo_better extends OpMode {
     LiftStopStat liftStopStat;
     boolean stayInPosIsActive = false;
     //ConceptTensorFlowObjectDetection_Apollo detection;
-    RobotHardware_apollo robot = new RobotHardware_apollo();
+    //RobotHardware_apollo robot = new RobotHardware_apollo();
+    RobotMove_apollo robot = new RobotMove_apollo();
     RobotHardware_apollo_FtcLib robot_Ftclib = new RobotHardware_apollo_FtcLib();
 
     @Override
     public void init() {
         gamepadEx1 = new GamepadEx(gamepad1);
         gamepadEx2 = new GamepadEx(gamepad2);
-
         //old_ARM_SERVO_DUMP_POS = robot.ARM_SERVO_DUMP_POS;
         old_ARM_SERVO_DUMP_POS = RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS.Pos;
-        boolean initIMU = robot.init(hardwareMap,false,true);
+        boolean initIMU = robot.Robot.init(hardwareMap,false,true);
         robot_Ftclib.init(hardwareMap, false);
         if (initIMU == false)
         {
@@ -151,13 +153,13 @@ public class BasicOpMode_apollo_better extends OpMode {
         {
             telemetry.addLine("int Imu succeeded");
         }
-        robot.ServoInit();
+        robot.Robot.ServoInit();
         liftStopStat = LiftStopStat.OPEN;
         liftXStat = LiftXStat.FIRST;
-        robot.plane_state = RobotHardware_apollo.PLANE_STATE.CLOSE;
+        robot.Robot.plane_state = RobotHardware_apollo.PLANE_STATE.CLOSE;
         robot_Ftclib.SetAllMotorsZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         //robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT, DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT, DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.Robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT, DcMotor.RunMode.RUN_USING_ENCODER);
 
 
 
@@ -177,10 +179,10 @@ public class BasicOpMode_apollo_better extends OpMode {
     public void loop() {
 
         drive();
-        telemetry.addData("gard stat is  " + robot.armServoGardState +  " gard Pos is " , "(%.4f)" , armGardServoPos);
-        telemetry.addData("arm stat is  " + robot.armServoState + " arm Pos is " , "(%.4f)" , armServoPos);
-        telemetry.addData("gard current pos is " , "(%.4f)" , robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO));
-        telemetry.addData("arm current Pos is " , "(%.4f)" , robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO));
+        telemetry.addData("gard stat is  " + robot.Robot.armServoGardState +  " gard Pos is " , "(%.4f)" , armGardServoPos);
+        telemetry.addData("arm stat is  " + robot.Robot.armServoState + " arm Pos is " , "(%.4f)" , armServoPos);
+        telemetry.addData("gard current pos is " , "(%.4f)" , robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO));
+        telemetry.addData("arm current Pos is " , "(%.4f)" , robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO));
         telemetry.addLine("field Centric Drive stats is " + fieldCentricDrive);
         if (fieldCentricDrive)
         {
@@ -189,7 +191,7 @@ public class BasicOpMode_apollo_better extends OpMode {
         telemetry.addLine("control Mod stats is " + controlMod);
         telemetry.addLine("up Side Down Mod stats is " + upSideDownMod);
         telemetry.addLine("lift stop servo stat is " + liftStopStat);
-        telemetry.addLine("lift Pos is " + robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT));
+        telemetry.addLine("lift Pos is " + robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT));
         telemetry.update();
 
     }
@@ -224,10 +226,10 @@ public class BasicOpMode_apollo_better extends OpMode {
         }
         if ((gamepadEx1.wasJustPressed(GamepadKeys.Button.BACK)) && (!gamepadEx1.isDown(GamepadKeys.Button.B)) && (!gamepadEx1.isDown(GamepadKeys.Button.A)))
         {
-            robot.ResetYaw();
+            robot.Robot.ResetYaw();
             fieldCentricDrive = !fieldCentricDrive;
         }
-        heading = robot.getImuRawHeading();
+        heading = robot.Robot.getImuRawHeading();
         if (gamepad1.y)
         {
             if(!pressDrive)
@@ -267,7 +269,7 @@ public class BasicOpMode_apollo_better extends OpMode {
         }
         else
         {
-            if (controlMod == true)
+            if (controlMod)
             {
                 robot_Ftclib.driveFieldCentric(
                         strafeSpeed/2,
@@ -315,149 +317,138 @@ public class BasicOpMode_apollo_better extends OpMode {
                     {
                        lunchDrone();
                     }
-                    if (gamepad1.dpad_down && gamepad1.back)
+                    if (gamepad1.dpad_down)
                     {
-                        if (pressCollectionConf)
+                        if (!pressCollectionConf)
                         {
-                            pressCollectionConf = false;
-                            RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS.Pos -= 0.01;
-                            RobotHardware_apollo.SERVO_POS.ARM_SERVO_COLLECT_POS.Pos -= 0.01;
-                            Log.d(TAG_COLLECTION, "ARM_SERVO_DUMP_POS is " + RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS.Pos);
-                            robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS.Pos);
-                            armServoPos = RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS.Pos;
-                        }
-                        //RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS.Pos -= 0.025;
-                        //robot.ARM_SERVO_DUMP_POS -= 0.025;
-
-                    }
-                    else if (gamepad1.dpad_up && gamepad1.back)
-                    {
-                        if (pressCollectionConf)
-                        {
-                            pressCollectionConf = false;
-                            RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS.Pos += 0.01;
-                            RobotHardware_apollo.SERVO_POS.ARM_SERVO_COLLECT_POS.Pos += 0.01;
-                            //robot.ARM_SERVO_DUMP_POS += 0.025;
-                            Log.d(TAG_COLLECTION, "ARM_SERVO_DUMP_POS is " + RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS.Pos);
-                            robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS.Pos);
-                            armServoPos = RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS.Pos;
-
-                        }
-                    }
-                    else if (gamepad1.dpad_left && gamepad1.back)
-                    {
-                        if (pressCollectionConf)
-                        {
-                            pressCollectionConf = false;
-                            switch (robot.armServoGardState)
+                            if (gamepad1.back)
                             {
-                                case OPEN:
-                                {
-                                    RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_POS.Pos -= 0.001;
-                                    Log.d(TAG_COLLECTION, "ARM_SERVO_GARD_OPEN_POS is " + RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_POS.Pos);
-                                    robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_POS.Pos);
-                                    armGardServoPos = RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_POS.Pos;
-                                }
-                                break;
-                                case CLOSE:
-                                {
-                                    RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_CLOSE_POS.Pos -= 0.001;
-                                    Log.d(TAG_COLLECTION, "ARM_SERVO_GARD_CLOSE_POS is " + RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_CLOSE_POS.Pos);
-                                    robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_CLOSE_POS.Pos);
-                                    armGardServoPos = RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_CLOSE_POS.Pos;
-                                }
-                                break;
-                                case OPEN_CLOSE:
-                                {
-                                    RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_CLOSE_POS.Pos -= 0.001;
-                                    Log.d(TAG_COLLECTION, "ARM_SERVO_GARD_OPEN_CLOSE_POS is " + RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_CLOSE_POS.Pos);
-                                    robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_CLOSE_POS.Pos);
-                                    armGardServoPos = RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_CLOSE_POS.Pos;
-                                }
-                                break;
+                                RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS.Pos -= 0.01;
+                                RobotHardware_apollo.SERVO_POS.ARM_SERVO_COLLECT_POS.Pos -= 0.01;
+                                Log.d(TAG_COLLECTION, "ARM_SERVO_DUMP_POS is " + RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS.Pos);
+                                robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS.Pos);
+                                armServoPos = RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS.Pos;
                             }
-                        }
-                    }
-                    else if (gamepad1.dpad_right && gamepad1.back)
-                    {
-                        if (pressCollectionConf)
-                        {
-                            pressCollectionConf = false;
-                            switch (robot.armServoGardState)
+                            else
                             {
-                                case OPEN: {
-                                    RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_POS.Pos += 0.001;
-                                    Log.d(TAG_COLLECTION, "ARM_SERVO_GARD_OPEN_POS is " + RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_POS.Pos);
-                                    robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_POS.Pos);
-                                    armGardServoPos = RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_POS.Pos;
-                                }
-                                break;
-                                case CLOSE: {
-                                    RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_CLOSE_POS.Pos += 0.001;
-                                    Log.d(TAG_COLLECTION, "ARM_SERVO_GARD_CLOSE_POS is " + RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_CLOSE_POS.Pos);
-                                    robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_CLOSE_POS.Pos);
-                                    armGardServoPos = RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_CLOSE_POS.Pos;
-                                }
-                                break;
-                                case OPEN_CLOSE: {
-                                    RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_CLOSE_POS.Pos += 0.001;
-                                    Log.d(TAG_COLLECTION, "ARM_SERVO_GARD_OPEN_CLOSE_POS is " + RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_CLOSE_POS.Pos);
-                                    robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_CLOSE_POS.Pos);
-                                    armGardServoPos = RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_CLOSE_POS.Pos;
-                                }
-                                break;
+                                double currentPosition = robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO);
+                                currentPosition -= 0.01;
+                                robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, currentPosition);
                             }
+                            pressCollectionConf = true;
                         }
+
                     }
                     else if (gamepad1.dpad_up)
                     {
-                        if (pressCollectionConf)
+                        if (!pressCollectionConf)
                         {
-                            pressCollectionConf = false;
-                            double currentPosition = robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO);
-                            currentPosition += 0.01;
-                            robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, currentPosition);
-                        }
-                        //RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS.Pos -= 0.025;
-                        //robot.ARM_SERVO_DUMP_POS -= 0.025;
+                            if (gamepad1.back)
+                            {
+                                RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS.Pos += 0.01;
+                                RobotHardware_apollo.SERVO_POS.ARM_SERVO_COLLECT_POS.Pos += 0.01;
+                                //robot.ARM_SERVO_DUMP_POS += 0.025;
+                                Log.d(TAG_COLLECTION, "ARM_SERVO_DUMP_POS is " + RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS.Pos);
+                                robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS.Pos);
+                                armServoPos = RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS.Pos;
+                            }
+                            else
+                            {
+                                double currentPosition = robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO);
+                                currentPosition += 0.01;
+                                robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, currentPosition);
+                            }
+                            pressCollectionConf = true;
 
-                    }
-                    else if (gamepad1.dpad_down)
-                    {
-                        if (pressCollectionConf)
-                        {
-                            pressCollectionConf = false;
-                            double currentPosition = robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO);
-                            currentPosition -= 0.01;
-                            robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, currentPosition);
-                        }
-                        //RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS.Pos -= 0.025;
-                        //robot.ARM_SERVO_DUMP_POS -= 0.025;
-
-                    }
-                    else if (gamepad1.dpad_right)
-                    {
-                        if (pressCollectionConf)
-                        {
-                            pressCollectionConf = false;
-                            servoCurrentPosition = robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO);
-                            servoCurrentPosition += 0.01;
-                            robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, servoCurrentPosition);
                         }
                     }
                     else if (gamepad1.dpad_left)
                     {
-                        if (pressCollectionConf)
+                        if (!pressCollectionConf)
                         {
-                            pressCollectionConf = false;
-                            servoCurrentPosition = robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO);
-                            servoCurrentPosition -= 0.01;
-                            robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, servoCurrentPosition);
+                            if (gamepad1.back)
+                            {
+                                switch (robot.Robot.armServoGardState)
+                                {
+                                    case OPEN:
+                                    {
+                                        RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_POS.Pos -= 0.001;
+                                        Log.d(TAG_COLLECTION, "ARM_SERVO_GARD_OPEN_POS is " + RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_POS.Pos);
+                                        robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_POS.Pos);
+                                        armGardServoPos = RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_POS.Pos;
+                                    }
+                                    break;
+                                    case CLOSE:
+                                    {
+                                        RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_CLOSE_POS.Pos -= 0.001;
+                                        Log.d(TAG_COLLECTION, "ARM_SERVO_GARD_CLOSE_POS is " + RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_CLOSE_POS.Pos);
+                                        robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_CLOSE_POS.Pos);
+                                        armGardServoPos = RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_CLOSE_POS.Pos;
+                                    }
+                                    break;
+                                    case OPEN_CLOSE:
+                                    {
+                                        RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_CLOSE_POS.Pos -= 0.001;
+                                        Log.d(TAG_COLLECTION, "ARM_SERVO_GARD_OPEN_CLOSE_POS is " + RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_CLOSE_POS.Pos);
+                                        robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_CLOSE_POS.Pos);
+                                        armGardServoPos = RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_CLOSE_POS.Pos;
+                                    }
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                servoCurrentPosition = robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO);
+                                servoCurrentPosition -= 0.01;
+                                robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, servoCurrentPosition);
+                            }
+                            pressCollectionConf = true;
+                        }
+                    }
+                    else if (gamepad1.dpad_right)
+                    {
+                        if (!pressCollectionConf)
+                        {
+                            if (gamepad1.back)
+                            {
+                                switch (robot.Robot.armServoGardState)
+                                {
+                                    case OPEN: {
+                                        RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_POS.Pos += 0.001;
+                                        Log.d(TAG_COLLECTION, "ARM_SERVO_GARD_OPEN_POS is " + RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_POS.Pos);
+                                        robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_POS.Pos);
+                                        armGardServoPos = RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_POS.Pos;
+                                    }
+                                    break;
+                                    case CLOSE: {
+                                        RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_CLOSE_POS.Pos += 0.001;
+                                        Log.d(TAG_COLLECTION, "ARM_SERVO_GARD_CLOSE_POS is " + RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_CLOSE_POS.Pos);
+                                        robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_CLOSE_POS.Pos);
+                                        armGardServoPos = RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_CLOSE_POS.Pos;
+                                    }
+                                    break;
+                                    case OPEN_CLOSE:
+                                    {
+                                        RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_CLOSE_POS.Pos += 0.001;
+                                        Log.d(TAG_COLLECTION, "ARM_SERVO_GARD_OPEN_CLOSE_POS is " + RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_CLOSE_POS.Pos);
+                                        robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_CLOSE_POS.Pos);
+                                        armGardServoPos = RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_CLOSE_POS.Pos;
+                                    }
+                                    break;
+                                }
+                            }
+                            else
+                            {
+                                servoCurrentPosition = robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO);
+                                servoCurrentPosition += 0.01;
+                                robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, servoCurrentPosition);
+                            }
+                            pressCollectionConf = true;
                         }
                     }
                     else
                     {
-                        pressCollectionConf = true;
+                        pressCollectionConf = false;
                     }
                     if (collectPixel == true)
                     {
@@ -487,7 +478,7 @@ public class BasicOpMode_apollo_better extends OpMode {
                     }
                     else if(gamepadEx2.wasJustPressed(GamepadKeys.Button.RIGHT_STICK_BUTTON))
                     {
-                        robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_POS.Pos);
+                        robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_POS.Pos);
                     }
                     else
                     {
@@ -524,77 +515,42 @@ public class BasicOpMode_apollo_better extends OpMode {
         }
         public void lunchDrone()
         {
-            if (robot.plane_state == RobotHardware_apollo.PLANE_STATE.OPEN)
+            if (robot.Robot.plane_state == RobotHardware_apollo.PLANE_STATE.OPEN)
             {
-                robot.plane_state = RobotHardware_apollo.PLANE_STATE.CLOSE;
-                robot.SetPosition(RobotHardware_apollo.DriveMotors.PLANE_SERVO, RobotHardware_apollo.SERVO_POS.PLANE_SERVO_CLOSE.Pos);
+                robot.Robot.plane_state = RobotHardware_apollo.PLANE_STATE.CLOSE;
+                robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.PLANE_SERVO, RobotHardware_apollo.SERVO_POS.PLANE_SERVO_CLOSE.Pos);
             }
-            else if(robot.plane_state == RobotHardware_apollo.PLANE_STATE.CLOSE)
+            else if(robot.Robot.plane_state == RobotHardware_apollo.PLANE_STATE.CLOSE)
             {
-                robot.plane_state = RobotHardware_apollo.PLANE_STATE.OPEN;
-                robot.SetPosition(RobotHardware_apollo.DriveMotors.PLANE_SERVO, RobotHardware_apollo.SERVO_POS.PLANE_SERVO_OPEN.Pos);
+                robot.Robot.plane_state = RobotHardware_apollo.PLANE_STATE.OPEN;
+                robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.PLANE_SERVO, RobotHardware_apollo.SERVO_POS.PLANE_SERVO_OPEN.Pos);
             }
         }
         public void servoStayInPos()
         {
-            //if (robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT) >= 200)
-            //{
-                servoCurrentPosition = robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO);
-                robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO,servoCurrentPosition);
-                /*
-                if(robot.armServoGardState == RobotHardware_apollo.ArmServoGardState.OPEN)
-                {
-                    //robot.armServoGardState = RobotHardware_apollo.ArmServoGardState.OPEN;
-                    //armServoGardState = ArmServoGardState.OPEN;
-                    robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_POS.Pos);
-                }
-                else if (robot.armServoGardState == RobotHardware_apollo.ArmServoGardState.CLOSE)
-                {
-                    //robot.armServoGardState = RobotHardware_apollo.ArmServoGardState.CLOSE;
-                    //armServoGardState = ArmServoGardState.CLOSE;
-                    robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_CLOSE_POS.Pos);
-                }
-
-                 */
-            //}
+                servoCurrentPosition = robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO);
+            robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO,servoCurrentPosition);
         }
         public void collectionMotor (double speed)
         {
-            robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION, speed);
+            robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION, speed);
         }
         public void CollectPixel()
         {
-            robot.armServoState = RobotHardware_apollo.ArmServoState.COLLECT;
-            //74
-
-            //if (robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO) != RobotHardware_apollo.SERVO_POS.ARM_SERVO_COLLECT_POS.Pos)
-            //{
-                //robot.armServoState = RobotHardware_apollo.ArmServoState.COLLECT;
-                // log
-                //armServoState = ArmServoState.COLLECT;
-                robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_COLLECT_POS.Pos);
-            //}
-            //if (robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO) != RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_POS.Pos)
-            //{
-                //log
-                robot.armServoGardState = RobotHardware_apollo.ArmServoGardState.OPEN;
-                //armServoGardState = ArmServoGardState.OPEN;
-                robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_POS.Pos);
-            //}
+            robot.Robot.armServoState = RobotHardware_apollo.ArmServoState.COLLECT;
+            robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_COLLECT_POS.Pos);
+            robot.Robot.armServoGardState = RobotHardware_apollo.ArmServoGardState.OPEN;
+            robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_POS.Pos);
         }
-        public void DumpPixel() throws InterruptedException {
-            //if(robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT) >= FIRST_LIFT)
-            //{
-            if (robot.armServoState != RobotHardware_apollo.ArmServoState.COLLECT)
+        public void DumpPixel(){
+            if (robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT) >= FIRST_LIFT)
             {
-                Log.d(TAG_COLLECTION,"armServoState is before " + robot.armServoState);
-                Log.d(TAG_COLLECTION,"armServoGardState is before " + robot.armServoGardState);
-                if(robot.armServoGardState == RobotHardware_apollo.ArmServoGardState.CLOSE)
+                Log.d(TAG_COLLECTION,"armServoState is before " + robot.Robot.armServoState);
+                Log.d(TAG_COLLECTION,"armServoGardState is before " + robot.Robot.armServoGardState);
+                if(robot.Robot.armServoGardState == RobotHardware_apollo.ArmServoGardState.CLOSE)
                 {
-                    robot.armServoGardState = RobotHardware_apollo.ArmServoGardState.OPEN_CLOSE;
-                    //armServoGardState = ArmServoGardState.OPEN_CLOSE;
-                    robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_CLOSE_POS.Pos);
-
+                    robot.Robot.armServoGardState = RobotHardware_apollo.ArmServoGardState.OPEN_CLOSE;
+                    robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_CLOSE_POS.Pos);
                     try
                     {
                         //Thread.sleep(400);
@@ -602,22 +558,19 @@ public class BasicOpMode_apollo_better extends OpMode {
                     {
                         Log.d(TAG_COLLECTION_THREAD, "catch exception: " + e.toString());
                     }
-                   // robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_CLOSE_POS.Pos);
                 }
-                else if(robot.armServoGardState == RobotHardware_apollo.ArmServoGardState.OPEN_CLOSE)
+                else if(robot.Robot.armServoGardState == RobotHardware_apollo.ArmServoGardState.OPEN_CLOSE)
                 {
-                    robot.armServoGardState = RobotHardware_apollo.ArmServoGardState.OPEN;
-                    //armServoGardState = ArmServoGardState.OPEN;
-                    robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_POS.Pos);
+                    robot.Robot.armServoGardState = RobotHardware_apollo.ArmServoGardState.OPEN;
+                    robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_POS.Pos);
                 }
-                else if (robot.armServoGardState == RobotHardware_apollo.ArmServoGardState.OPEN)
+                else if (robot.Robot.armServoGardState == RobotHardware_apollo.ArmServoGardState.OPEN)
                 {
-                    robot.armServoGardState = RobotHardware_apollo.ArmServoGardState.CLOSE;
-                    //armServoGardState = ArmServoGardState.CLOSE;
-                    robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_CLOSE_POS.Pos);
+                    robot.Robot.armServoGardState = RobotHardware_apollo.ArmServoGardState.CLOSE;
+                    robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_CLOSE_POS.Pos);
                 }
 
-                if (robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO) != RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS.Pos)
+                if (robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO) != RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS.Pos)
                 {
                     try
                     {
@@ -626,12 +579,12 @@ public class BasicOpMode_apollo_better extends OpMode {
                     {
                         Log.d(TAG_COLLECTION_THREAD, "catch exception: " + e.toString());
                     }
-                    robot.armServoState = RobotHardware_apollo.ArmServoState.DUMP;
-                    robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS.Pos);
+                    robot.Robot.armServoState = RobotHardware_apollo.ArmServoState.DUMP;
+                    robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS.Pos);
                 }
 
-                Log.d(TAG_COLLECTION,"armServoState is next " + robot.armServoState);
-                Log.d(TAG_COLLECTION,"armServoGardState is next " + robot.armServoGardState);
+                Log.d(TAG_COLLECTION,"armServoState is next " + robot.Robot.armServoState);
+                Log.d(TAG_COLLECTION,"armServoGardState is next " + robot.Robot.armServoGardState);
             }
 
             //}
@@ -668,26 +621,26 @@ public class BasicOpMode_apollo_better extends OpMode {
                 Log.d(TAG_LIFT,"liftPositionA " + liftPositionA);
                 Log.d(TAG_LIFT,"liftPositionB " + liftPositionB);
                 Log.d(TAG_LIFT,"liftPositionX " + liftPositionX);
-                Log.d(TAG_LIFT,"pos is " + robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT));
-                if ((robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT) < 100) || (runtime.seconds() > 3 * 60))
+                Log.d(TAG_LIFT,"pos is " + robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT));
+                if ((robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT) < 100) || (runtime.seconds() > 3 * 60))
                 {
-                    robot.SetZeroPowerBehavior(RobotHardware_apollo.DriveMotors.LIFT, DcMotor.ZeroPowerBehavior.FLOAT);
+                    robot.Robot.SetZeroPowerBehavior(RobotHardware_apollo.DriveMotors.LIFT, DcMotor.ZeroPowerBehavior.FLOAT);
                 }
                 else
                 {
-                    robot.SetZeroPowerBehavior(RobotHardware_apollo.DriveMotors.LIFT, DcMotor.ZeroPowerBehavior.BRAKE);
+                    robot.Robot.SetZeroPowerBehavior(RobotHardware_apollo.DriveMotors.LIFT, DcMotor.ZeroPowerBehavior.BRAKE);
                 }
                 if (liftStop)
                 {
                     switch (liftStopStat)
                     {
                         case OPEN:
-                            robot.SetPosition(RobotHardware_apollo.DriveMotors.LIFT_STOP_SERVO, RobotHardware_apollo.SERVO_POS.LIFT_STOP_SERVO_CLOSE.Pos);
+                            robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.LIFT_STOP_SERVO, RobotHardware_apollo.SERVO_POS.LIFT_STOP_SERVO_CLOSE.Pos);
                             liftStopStat = LiftStopStat.CLOSE;
-                            Log.d(TAG_LIFT,"lift Pos at lock is " + robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT));
+                            Log.d(TAG_LIFT,"lift Pos at lock is " + robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT));
                         break;
                         case CLOSE:
-                            robot.SetPosition(RobotHardware_apollo.DriveMotors.LIFT_STOP_SERVO, RobotHardware_apollo.SERVO_POS.LIFT_STOP_SERVO_OPEN.Pos);
+                            robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.LIFT_STOP_SERVO, RobotHardware_apollo.SERVO_POS.LIFT_STOP_SERVO_OPEN.Pos);
                             liftStopStat = LiftStopStat.OPEN;
                         break;
                         default:
@@ -700,9 +653,9 @@ public class BasicOpMode_apollo_better extends OpMode {
                 {
                     liftState = LiftState.RESETING_INCODER;
                     liftPower = 0;
-                    robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT, liftPower);
-                    robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT_SECOND, liftPower);
-                    robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT , DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT, liftPower);
+                    robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT_SECOND, liftPower);
+                    robot.Robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT , DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     telemetry.addLine("lift is at pos 0");
                 }
                 if (liftUp == false)
@@ -722,7 +675,7 @@ public class BasicOpMode_apollo_better extends OpMode {
                         else
                         {*/
 
-                        Log.d(TAG_LIFT, "run to position " + pos + " ; current position is " + robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT));
+                        Log.d(TAG_LIFT, "run to position " + pos + " ; current position is " + robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT));
                         //}
 
                     }
@@ -733,12 +686,12 @@ public class BasicOpMode_apollo_better extends OpMode {
                 }
                 if (liftUp == true)
                 {
-                    if (robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT) < liftMaxHight)
+                    if (robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT) < liftMaxHight)
                     {
                         setGateServoToClose();
                         liftState = LiftState.MANUAL_CONTROL;
-                        Log.d(TAG_LIFT, "lift up pos " + robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT));
-                        robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT , DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                        Log.d(TAG_LIFT, "lift up pos " + robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT));
+                        robot.Robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT , DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                         liftPower = POWER_LIFT;
                         inPosition = false;
                     }
@@ -759,8 +712,8 @@ public class BasicOpMode_apollo_better extends OpMode {
                         //robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, ARM_SERVO_COLLECT_POS);
                         //collectThread.CollectPixel();
                         liftState = LiftState.MANUAL_CONTROL;
-                        Log.d(TAG_LIFT, "lift down pos " + robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT));
-                        robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT , DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                        Log.d(TAG_LIFT, "lift down pos " + robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT));
+                        robot.Robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT , DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                         liftPower = -POWER_LIFT;
                         inPosition = false;
                         /*
@@ -852,7 +805,7 @@ public class BasicOpMode_apollo_better extends OpMode {
                 {
                     if ((inPosition == false) && (isLiftBusy() == false))
                     {
-                        if (robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT) >= 0)
+                        if (robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT) >= 0)
                         {
                             stayInPos();
                         }
@@ -872,12 +825,12 @@ public class BasicOpMode_apollo_better extends OpMode {
                 if(liftPower != 0)
                 {
                     Log.d(TAG_LIFT, "lift Power is " + liftPower);
-                    Log.d(TAG_LIFT, "lift mode is  " + robot.lift.getMode());
-                    Log.d(TAG_LIFT, "current position " + robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT));
+                    Log.d(TAG_LIFT, "lift mode is  " + robot.Robot.lift.getMode());
+                    Log.d(TAG_LIFT, "current position " + robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT));
 
                 }
-                robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT , liftPower);
-                robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT_SECOND , liftPower);
+                robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT , liftPower);
+                robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT_SECOND , liftPower);
 
 
             }
@@ -913,7 +866,7 @@ public class BasicOpMode_apollo_better extends OpMode {
             if (Pos == 0)
             {
                 try {
-                    double currentPosition = robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT);
+                    double currentPosition = robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT);
                     if (currentPosition < THIRD_LIFT)
                     {
                         Thread.sleep(500);
@@ -925,11 +878,11 @@ public class BasicOpMode_apollo_better extends OpMode {
             }
             telemetry.addData("run to position ", "%d", Pos);
             Log.d(TAG_LIFT, "run to position " + Pos);
-            currentPosition = (int) robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT);
+            currentPosition = (int) robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT);
             pos = Pos;
-            robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT , DcMotor.RunMode.RUN_USING_ENCODER);
-            robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.LIFT , Pos);
-            robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT , DcMotor.RunMode.RUN_TO_POSITION);
+            robot.Robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT , DcMotor.RunMode.RUN_USING_ENCODER);
+            robot.Robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.LIFT , Pos);
+            robot.Robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT , DcMotor.RunMode.RUN_TO_POSITION);
             if (currentPosition > Pos)
             {
                 liftPower = -POWER_LIFT;
@@ -938,7 +891,7 @@ public class BasicOpMode_apollo_better extends OpMode {
             {
                 liftPower = POWER_LIFT;
             }
-            robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT ,liftPower);
+            robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT ,liftPower);
             //robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT_SECOND ,liftPower);
             inPosition = false;
             liftTime.reset();
@@ -950,16 +903,16 @@ public class BasicOpMode_apollo_better extends OpMode {
         {
             Log.d(TAG_LIFT,"stayInPos start");
             //liftState != LiftState.RESETING_INCODER ||
-            if (robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT) > 20)
+            if (robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT) > 20)
             {
-                robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT , DcMotor.RunMode.RUN_USING_ENCODER);
-                currentPosition = (int) robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT);;
+                robot.Robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT , DcMotor.RunMode.RUN_USING_ENCODER);
+                currentPosition = (int) robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT);;
                 currentPosition += 10;
                 Log.d(TAG_LIFT, "stay in pos start, current Position is " + currentPosition);
-                pos = (int) robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT);
+                pos = (int) robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT);
                 //stayInPosIsActive = true;
-                robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.LIFT , currentPosition);
-                robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT , DcMotor.RunMode.RUN_TO_POSITION);
+                robot.Robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.LIFT , currentPosition);
+                robot.Robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT , DcMotor.RunMode.RUN_TO_POSITION);
                 if (currentPosition > pos)
                 {
                     liftPower = -POWER_LIFT;
@@ -968,7 +921,7 @@ public class BasicOpMode_apollo_better extends OpMode {
                 {
                     liftPower = POWER_LIFT;
                 }
-                robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT ,liftPower);
+                robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT ,liftPower);
                 //robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT_SECOND ,liftPower);
                 liftTime.reset();
                 liftState = LiftState.AUTO_CONTROL_WAIT_FOR_BUSY;
@@ -976,8 +929,8 @@ public class BasicOpMode_apollo_better extends OpMode {
             }
             else
             {
-                robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT, 0);
-                robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT_SECOND, 0);
+                robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT, 0);
+                robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT_SECOND, 0);
             }
 
 
@@ -989,7 +942,7 @@ public class BasicOpMode_apollo_better extends OpMode {
             //robot.IsBusy(RobotHardware_apollo.DriveMotors.LIFT);
             if (liftState == LiftState.AUTO_CONTROL_WAIT_FOR_BUSY)
             {
-                if ((robot.IsBusy(RobotHardware_apollo.DriveMotors.LIFT) == true) && (liftTime.seconds() < timerTimeoutInSeconds))
+                if ((robot.Robot.IsBusy(RobotHardware_apollo.DriveMotors.LIFT) == true) && (liftTime.seconds() < timerTimeoutInSeconds))
                 {
                     isLiftBusy = true;
                 }
@@ -1002,19 +955,19 @@ public class BasicOpMode_apollo_better extends OpMode {
             if (liftTime.seconds() > timerTimeoutInSeconds)
             {
 
-                Log.d(TAG_LIFT, "stopped due to time out. stopped at " + robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT));
+                Log.d(TAG_LIFT, "stopped due to time out. stopped at " + robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT));
                 liftState = LiftState.AUTO_CONTROL_ERROR;
                 inPosition = true;
 
             }
             else
             {
-                Log.d(TAG_LIFT, "Final Position is " + robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT));
+                Log.d(TAG_LIFT, "Final Position is " + robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT));
                 Log.d(TAG_LIFT, "timer in milliseconds is " + liftTime.milliseconds() + " timer in seconds is " + liftTime.seconds());
                 inPosition = true;
                 liftState = LiftState.AUTO_CONTROL_IN_POSITION;
             }
-            robot.SetZeroPowerBehavior(RobotHardware_apollo.DriveMotors.LIFT, DcMotor.ZeroPowerBehavior.BRAKE);
+            robot.Robot.SetZeroPowerBehavior(RobotHardware_apollo.DriveMotors.LIFT, DcMotor.ZeroPowerBehavior.BRAKE);
         }
         private void liftrest()
         {
@@ -1024,13 +977,13 @@ public class BasicOpMode_apollo_better extends OpMode {
 
         private void setGateServoToClose()
         {
-            robot.armServoGardState = RobotHardware_apollo.ArmServoGardState.CLOSE;
-            robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_CLOSE_POS.Pos);
+            robot.Robot.armServoGardState = RobotHardware_apollo.ArmServoGardState.CLOSE;
+            robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_CLOSE_POS.Pos);
         }
         private void goToPosAndMoveArm(int Pos) throws InterruptedException {
             goTo(Pos);
-            robot.armServoState = RobotHardware_apollo.ArmServoState.DUMP;
-            robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS.Pos);
+            robot.Robot.armServoState = RobotHardware_apollo.ArmServoState.DUMP;
+            robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS.Pos);
         }
     }
 

@@ -1012,8 +1012,6 @@ public class AutoDriveApollo{
             holdHeading(TURN_SPEED,heading,0.5);
         }
         robot.SetPosition(RobotHardware_apollo.DriveMotors.DUMP_SERVO, RobotHardware_apollo.SERVO_POS.DUMP_SERVO_OPEN.Pos);
-        turnToHeadingApollo(TURN_SPEED,heading + 5);
-        turnToHeadingApollo(TURN_SPEED,heading - 5);
         linearOpMode.sleep(2000);
         driveLeft(DRIVE_SPEED,7,heading);
         //holdHeading(TURN_SPEED,heading,1);

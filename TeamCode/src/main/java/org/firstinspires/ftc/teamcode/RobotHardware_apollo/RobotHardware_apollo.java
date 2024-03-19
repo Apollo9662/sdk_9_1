@@ -671,7 +671,6 @@ public class RobotHardware_apollo {
             }
             case LIFT:
                 lift.setZeroPowerBehavior(myZeroPowerBehavior);
-                //liftSecond.setZeroPowerBehavior(myZeroPowerBehavior);
             case LIFT_SECOND:
                 liftSecond.setZeroPowerBehavior(myZeroPowerBehavior);
             break;

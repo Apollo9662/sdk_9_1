@@ -66,16 +66,57 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  *
  */
 
-public class RobotMoveServo extends RobotHardware_apollo{
-    public void openDumpServo() {SetPosition(RobotHardware_apollo.DriveMotors.DUMP_SERVO, RobotHardware_apollo.SERVO_POS.DUMP_SERVO_OPEN.Pos);}
-    public void closeDumpServo() {SetPosition(RobotHardware_apollo.DriveMotors.DUMP_SERVO, RobotHardware_apollo.SERVO_POS.DUMP_SERVO_CLOSE.Pos);}
-    public void lunchDrone() {SetPosition(RobotHardware_apollo.DriveMotors.PLANE_SERVO, RobotHardware_apollo.SERVO_POS.PLANE_SERVO_OPEN.Pos);}
-    public void loadDrone() {SetPosition(RobotHardware_apollo.DriveMotors.PLANE_SERVO, RobotHardware_apollo.SERVO_POS.PLANE_SERVO_CLOSE.Pos);}
-    public void lockLift() {SetPosition(RobotHardware_apollo.DriveMotors.LIFT_STOP_SERVO, RobotHardware_apollo.SERVO_POS.LIFT_STOP_SERVO_CLOSE.Pos);}
-    public void unlockLift() {SetPosition(RobotHardware_apollo.DriveMotors.LIFT_STOP_SERVO, RobotHardware_apollo.SERVO_POS.LIFT_STOP_SERVO_OPEN.Pos);}
-    public void OpenGard() {SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_POS.Pos);}
-    public void halfOpenGard() {SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_CLOSE_POS.Pos);}
-    public void closeOpenGard() {SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_CLOSE_POS.Pos);}
-    public void dumpPixel() {SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS.Pos);}
-    public void collectPixel() {SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_COLLECT_POS.Pos);}
+public class RobotMoveServo{
+    RobotHardware_apollo robot;
+    public RobotMoveServo(RobotHardware_apollo myRobot)
+    {
+        robot = myRobot;
+    }
+    public void unloadPixel() {robot.SetPosition(RobotHardware_apollo.DriveMotors.DUMP_SERVO, RobotHardware_apollo.SERVO_POS.DUMP_UNLOAD_PIXEL.Pos);}
+    public void loadPixel() {robot.SetPosition(RobotHardware_apollo.DriveMotors.DUMP_SERVO, RobotHardware_apollo.SERVO_POS.DUMP_LOAD_PIXEL.Pos);}
+    public void lunchDrone()
+    {
+        robot.drone_state = RobotHardware_apollo.DRONE_STATE.LUNCH;
+        robot.SetPosition(RobotHardware_apollo.DriveMotors.DRONE_SERVO, RobotHardware_apollo.SERVO_POS.DRONE_LUNCH.Pos);
+    }
+    public void loadDrone()
+    {
+        robot.drone_state = RobotHardware_apollo.DRONE_STATE.LOADED;
+        robot.SetPosition(RobotHardware_apollo.DriveMotors.DRONE_SERVO, RobotHardware_apollo.SERVO_POS.DRONE_LOAD.Pos);
+    }
+    public void lockLift()
+    {
+        robot.liftLockStat = RobotHardware_apollo.LiftLockStat.LOCK;
+        robot.SetPosition(RobotHardware_apollo.DriveMotors.LIFT_STOP_SERVO, RobotHardware_apollo.SERVO_POS.LIFT_LOCK.Pos);
+    }
+    public void unlockLift()
+    {
+        robot.liftLockStat = RobotHardware_apollo.LiftLockStat.UNLOCK;
+        robot.SetPosition(RobotHardware_apollo.DriveMotors.LIFT_STOP_SERVO, RobotHardware_apollo.SERVO_POS.LIFT_UNLOCK.Pos);
+    }
+    public void openGard()
+    {
+        robot.armGardState = RobotHardware_apollo.ArmGardState.OPEN;
+        robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_GARD_OPEN.Pos);
+    }
+    public void halfOpenGard()
+    {
+        robot.armGardState = RobotHardware_apollo.ArmGardState.HALF_OPEN;
+        robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_GARD_HALF_OPEN.Pos);
+    }
+    public void closeGard()
+    {
+        robot.armGardState = RobotHardware_apollo.ArmGardState.CLOSE;
+        robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_GARD_CLOSE.Pos);
+    }
+    public void dumpPixel()
+    {
+        robot.armState = RobotHardware_apollo.ArmState.DUMP;
+        robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, RobotHardware_apollo.SERVO_POS.ARM_DUMP.Pos);
+    }
+    public void collectPixel()
+    {
+        robot.armState = RobotHardware_apollo.ArmState.COLLECT;
+        robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, RobotHardware_apollo.SERVO_POS.ARM_COLLECT.Pos);
+    }
 }

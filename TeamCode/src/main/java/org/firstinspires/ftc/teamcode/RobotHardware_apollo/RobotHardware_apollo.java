@@ -31,8 +31,6 @@ package org.firstinspires.ftc.teamcode.RobotHardware_apollo;
 
 import android.util.Log;
 
-import com.acmerobotics.dashboard.config.Config;
-import com.arcrobotics.ftclib.drivebase.MecanumDrive;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.dfrobot.HuskyLens;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -43,7 +41,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
-import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -71,14 +68,20 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 public class RobotHardware_apollo {
 
-    public enum ArmServoGardState{OPEN,
+    public enum ArmGardState{OPEN,
         CLOSE,
-        OPEN_CLOSE}
-    public ArmServoGardState armServoGardState;
-    public enum ArmServoState{COLLECT,
+        HALF_OPEN}
+    public ArmGardState armGardState;
+    public enum ArmState{COLLECT,
         DUMP}
-    public ArmServoState armServoState;
-    double headingOffset = 0;
+    public enum LiftLockStat
+    {
+        LOCK,
+        UNLOCK
+    }
+    public LiftLockStat liftLockStat;
+    public ArmState armState;
+    public double headingOffset = 0;
     /* Declare OpMode members. */
     private LinearOpMode myOpMode = null;   // gain access to methods in the calling OpMode.
     // Define Motor and Servo objects  (Make them private so they can't be accessed externally)
@@ -97,7 +100,7 @@ public class RobotHardware_apollo {
     private DcMotorEx frontRightDrive = null;
     private DcMotorEx backRightDrive = null;
     private DcMotorEx collection = null;
-    public DcMotorEx lift = null;
+    private DcMotorEx lift = null;
     private DcMotorEx liftSecond = null;  // private     public DcMotorEx lift = null; // private
 
     public static DriveMotors driveMotors;
@@ -107,33 +110,33 @@ public class RobotHardware_apollo {
             BACK_RIGHT_DRIVE,
             ARM_SERVO,
             ARM_GARD_SERVO,
-            PLANE_SERVO,
+            DRONE_SERVO,
             DUMP_SERVO,
             TOUCH_SENSOR1,
             LIFT,
             LIFT_SECOND,
             LIFT_STOP_SERVO,
             COLLECTION};
-    public enum PLANE_STATE
+    public enum DRONE_STATE
     {
-        OPEN,
-        CLOSE
+        LUNCH,
+        LOADED
     };
-    public PLANE_STATE plane_state;
+    public DRONE_STATE drone_state;
     public enum SERVO_POS {
         //DUMP_SERVO_CLOSE (0.9),
-        DUMP_SERVO_CLOSE (0.89),
-        DUMP_SERVO_OPEN (0.32),
-        LIFT_STOP_SERVO_OPEN(1.0),
-        LIFT_STOP_SERVO_CLOSE(0.89),
-        PLANE_SERVO_CLOSE (0.9),
-        PLANE_SERVO_OPEN (0.25),
-        ARM_SERVO_COLLECT_POS (1.0),
-        ARM_SERVO_DUMP_POS (0.4389),
-        ARM_SERVO_DUMP_POS_AUTO_DRIVE (0.44),
-        ARM_SERVO_GARD_OPEN_POS (0.45),
-        ARM_SERVO_GARD_CLOSE_POS (0.5),
-        ARM_SERVO_GARD_OPEN_CLOSE_POS (0.48);
+        DUMP_LOAD_PIXEL (0.89),
+        DUMP_UNLOAD_PIXEL (0.32),
+        LIFT_UNLOCK(1.0),
+        LIFT_LOCK(0.89),
+        DRONE_LOAD (0.9),
+        DRONE_LUNCH (0.25),
+        ARM_COLLECT (1.0),
+        ARM_DUMP (0.4389),
+        ARM_DUMP_AUTO_DRIVE (0.44),
+        ARM_GARD_OPEN (0.45),
+        ARM_GARD_CLOSE (0.5),
+        ARM_GARD_HALF_OPEN (0.48);
 
         public Double Pos;
 
@@ -242,14 +245,14 @@ public class RobotHardware_apollo {
     }
     public void ServoInit()
     {
-        armServoState = ArmServoState.COLLECT;
-        armServoGardState = ArmServoGardState.OPEN;
-        armServo.setPosition(SERVO_POS.ARM_SERVO_COLLECT_POS.Pos);
-        armGardServo.setPosition(SERVO_POS.ARM_SERVO_GARD_OPEN_POS.Pos);
-        dumpServo.setPosition(SERVO_POS.DUMP_SERVO_CLOSE.Pos);
-        plane_state = PLANE_STATE.CLOSE;
-        planeServo.setPosition(SERVO_POS.PLANE_SERVO_CLOSE.Pos);
-        liftStopServo.setPosition(SERVO_POS.LIFT_STOP_SERVO_OPEN.Pos);
+        armState = ArmState.COLLECT;
+        armGardState = ArmGardState.OPEN;
+        armServo.setPosition(SERVO_POS.ARM_COLLECT.Pos);
+        armGardServo.setPosition(SERVO_POS.ARM_GARD_OPEN.Pos);
+        dumpServo.setPosition(SERVO_POS.DUMP_LOAD_PIXEL.Pos);
+        drone_state = DRONE_STATE.LOADED;
+        planeServo.setPosition(SERVO_POS.DRONE_LOAD.Pos);
+        liftStopServo.setPosition(SERVO_POS.LIFT_UNLOCK.Pos);
 
     }
     public HuskyLens getHuskyLens() {
@@ -383,6 +386,42 @@ public class RobotHardware_apollo {
                 return (0);
         }
     }
+    public DcMotor.RunMode GetMode(DriveMotors motor)
+    {
+        switch (motor) {
+
+            case BACK_LEFT_DRIVE:
+            {
+                return backLeftDrive.getMode();
+            }
+            case BACK_RIGHT_DRIVE:
+            {
+                return backRightDrive.getMode();
+            }
+            case FRONT_LEFT_DRIVE:
+            {
+                return frontLeftDrive.getMode();
+            }
+            case FRONT_RIGHT_DRIVE:
+            {
+                return frontRightDrive.getMode();
+            }
+            case LIFT:
+            {
+                return lift.getMode();
+            }
+            case LIFT_SECOND:
+            {
+                return liftSecond.getMode();
+            }
+            case COLLECTION:
+            {
+                return collection.getMode();
+            }
+            default:
+                return (null);
+        }
+    }
     public PIDFCoefficients GetPIDFCoefficients(DriveMotors motor, DcMotor.RunMode myMode)
     {
         switch (motor) {
@@ -491,7 +530,7 @@ public class RobotHardware_apollo {
             {
                 return (armGardServo.getPosition());
             }
-            case PLANE_SERVO:
+            case DRONE_SERVO:
             {
                 return (planeServo.getPosition());
             }
@@ -595,8 +634,7 @@ public class RobotHardware_apollo {
     public void SetPosition(DriveMotors motor, double Position)
     {
         switch (motor) {
-
-            case PLANE_SERVO:
+            case DRONE_SERVO:
                 planeServo.setPosition(Position);
             break;
             case ARM_SERVO:

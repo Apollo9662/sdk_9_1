@@ -66,52 +66,15 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  *
  */
 
-public class RobotSetPosMotor{
+public class RobotSetPosServo{
     RobotHardware_apollo robot;
-    public RobotSetPosMotor(RobotHardware_apollo myRobot)
+    public RobotSetPosServo(RobotHardware_apollo myRobot)
     {
         robot = myRobot;
     }
-    public void lift(int pos,double power)
-    {
-        robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT,DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.LIFT,pos);
-        robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT,DcMotor.RunMode.RUN_TO_POSITION);
-        robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT,power);
-    }
-    public void collection(int pos,double power)
-    {
-        robot.SetMode(RobotHardware_apollo.DriveMotors.COLLECTION,DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.COLLECTION,pos);
-        robot.SetMode(RobotHardware_apollo.DriveMotors.COLLECTION,DcMotor.RunMode.RUN_TO_POSITION);
-        robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION,power);
-    }
-    public void backLeftDrive(int pos,double power)
-    {
-        robot.SetMode(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE,DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE,pos);
-        robot.SetMode(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE,DcMotor.RunMode.RUN_TO_POSITION);
-        robot.SetPower(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE,power);
-    }
-    public void backRightDrive(int pos,double power)
-    {
-        robot.SetMode(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE,DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE,pos);
-        robot.SetMode(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE,DcMotor.RunMode.RUN_TO_POSITION);
-        robot.SetPower(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE,power);
-    }
-    public void frontLeftDrive(int pos,double power)
-    {
-        robot.SetMode(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE,DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE,pos);
-        robot.SetMode(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE,DcMotor.RunMode.RUN_TO_POSITION);
-        robot.SetPower(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE,power);
-    }
-    public void frontRightDrive(int pos,double power)
-    {
-        robot.SetMode(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE,DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE,pos);
-        robot.SetMode(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE,DcMotor.RunMode.RUN_TO_POSITION);
-        robot.SetPower(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE,power);
-    }
+    public void drone(double pos) {robot.SetPosition(RobotHardware_apollo.DriveMotors.DRONE_SERVO,pos);}
+    public void dump(double pos) {robot.SetPosition(RobotHardware_apollo.DriveMotors.DUMP_SERVO,pos);}
+    public void arm(double pos) {robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO,pos);}
+    public void gard(double pos) {robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO,pos);}
+    public void liftLocker(double pos) {robot.SetPosition(RobotHardware_apollo.DriveMotors.DUMP_SERVO,pos);}
 }

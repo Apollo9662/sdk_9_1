@@ -40,6 +40,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.teamcode.RobotHardware_apollo.RobotHardware_apollo;
+import org.firstinspires.ftc.teamcode.RobotHardware_apollo.RobotMove_apollo;
 
 /**
  *  This file illustrates the concept of driving an autonomous path based on Gyro heading and encoder counts.
@@ -187,7 +188,7 @@ public class AutoDriveApollo{
     public final double     P_TURN_GAIN            = 0.01;     // Larger is more responsive, but also less stable ; PLAY WITH THIS
     public final double     P_DRIVE_GAIN           = 0.03;      // Larger is more responsive, but also less stable
 
-    RobotHardware_apollo robot = new RobotHardware_apollo();
+    RobotMove_apollo robot = new RobotMove_apollo();
     HuskyLens_Apollo robotHuskLens = new HuskyLens_Apollo();
     LinearOpMode linearOpMode;
 
@@ -197,14 +198,14 @@ public class AutoDriveApollo{
     }
     //@Override
     public void init(HuskyLens_Apollo.PropColor propColor) {
-        initIMU = robot.init(linearOpMode.hardwareMap,true,true);
+        initIMU = robot.Robot.init(linearOpMode.hardwareMap,true,true);
         switch (propColor)
         {
             case RED:
-                initHuskyLens = robotHuskLens.initHuskyLens(robot.getHuskyLens(), HuskyLens_Apollo.PropColor.RED);
+                initHuskyLens = robotHuskLens.initHuskyLens(robot.Robot.getHuskyLens(), HuskyLens_Apollo.PropColor.RED);
             break;
             case BLUE:
-                initHuskyLens = robotHuskLens.initHuskyLens(robot.getHuskyLens(), HuskyLens_Apollo.PropColor.BLUE);
+                initHuskyLens = robotHuskLens.initHuskyLens(robot.Robot.getHuskyLens(), HuskyLens_Apollo.PropColor.BLUE);
             break;
             default:
                 initHuskyLens = false;
@@ -226,16 +227,16 @@ public class AutoDriveApollo{
         {
             linearOpMode.telemetry.addLine("int Husky lens succeeded ");
         }
-        robot.ServoInit();
-        robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_CLOSE_POS.Pos);
-        robot.SetAllDriveMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.Robot.ServoInit();
+        robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_GARD_CLOSE.Pos);
+        robot.Robot.SetAllDriveMotorsMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-        robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT, DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.SetAllDriveMotorsZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.Robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT, DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.Robot.SetAllDriveMotorsZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        robot.SetAllDriveMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT, DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.SetZeroPowerBehavior(RobotHardware_apollo.DriveMotors.LIFT, DcMotor.ZeroPowerBehavior.BRAKE);
+        robot.Robot.SetAllDriveMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.Robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT, DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.Robot.SetZeroPowerBehavior(RobotHardware_apollo.DriveMotors.LIFT, DcMotor.ZeroPowerBehavior.BRAKE);
 
         resetHeading();
         //}
@@ -296,24 +297,24 @@ public class AutoDriveApollo{
             Log.d(TAG_DRIVE, "drive Straight; maxDriveSpeed: " + maxDriveSpeed + " distance: "+ distance + " heading: " + heading);
             // Determine new target position, and pass to motor controller
             int moveCounts = (int)(distance * COUNTS_PER_INCH);
-            frontLeftTarget = (int) robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) + moveCounts;
-            frontRightTarget = (int) robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) + moveCounts;
-            backLeftTarget = (int) robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE) + moveCounts;
-            backRightTarget = (int)robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE) + moveCounts;
-            Log.d(TAG_DRIVE,"Current Position; front left: " + robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) +
-                    " front right "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) +
-                    " back left "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE)+
-                    " back right "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE));
+            frontLeftTarget = (int) robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) + moveCounts;
+            frontRightTarget = (int) robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) + moveCounts;
+            backLeftTarget = (int) robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE) + moveCounts;
+            backRightTarget = (int)robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE) + moveCounts;
+            Log.d(TAG_DRIVE,"Current Position; front left: " + robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) +
+                    " front right "+ robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) +
+                    " back left "+ robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE)+
+                    " back right "+ robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE));
             Log.d(TAG_DRIVE,"Go To Position; front left: " + frontLeftTarget +
                     " front right "+ frontRightTarget +
                     " back left "+ backLeftTarget+
                     " back right "+ backRightTarget);
             // Set Target FIRST, then turn on RUN_TO_POSITION
-            robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE, frontLeftTarget);
-            robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE, frontRightTarget);
-            robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE, backLeftTarget);
-            robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE, backRightTarget);
-            robot.SetAllDriveMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.Robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE, frontLeftTarget);
+            robot.Robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE, frontRightTarget);
+            robot.Robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE, backLeftTarget);
+            robot.Robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE, backRightTarget);
+            robot.Robot.SetAllDriveMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // Set the required driving speed  (must be positive for RUN_TO_POSITION)
             // Start driving straight, and then enter the control loop
@@ -322,10 +323,10 @@ public class AutoDriveApollo{
 
             // keep looping while we are still active, and BOTH motors are running.
             while (linearOpMode.opModeIsActive() &&
-                    (robot.IsBusy(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) &&
-                            robot.IsBusy(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) &&
-                                robot.IsBusy(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE) &&
-                                    robot.IsBusy(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE))){
+                    (robot.Robot.IsBusy(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) &&
+                            robot.Robot.IsBusy(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) &&
+                            robot.Robot.IsBusy(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE) &&
+                            robot.Robot.IsBusy(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE))){
 
                 // Determine required steering to keep on heading
                 turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
@@ -344,17 +345,17 @@ public class AutoDriveApollo{
             // Stop all motion & Turn off RUN_TO_POSITION
             moveRobot(0, 0);
             Log.d(TAG_DRIVE,"Stopped!!!!!!!!!!!!!!!!!!");
-            Log.d(TAG_DRIVE,"Position at stop; front left: " + robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) +
-                    " front right "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) +
-                    " back left "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE)+
-                    " back right "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE));
+            Log.d(TAG_DRIVE,"Position at stop; front left: " + robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) +
+                    " front right "+ robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) +
+                    " back left "+ robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE)+
+                    " back right "+ robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE));
             //  sleep(3000);
             Log.d(TAG_DRIVE,"Position after stop;" +
-                    " front left: " + robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) +
-                    " front right "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) +
-                    " back left "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE)+
-                    " back right "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE));
-            robot.SetAllDriveMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    " front left: " + robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) +
+                    " front right "+ robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) +
+                    " back left "+ robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE)+
+                    " back right "+ robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE));
+            robot.Robot.SetAllDriveMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
     public void driveRight(double maxDriveSpeed,
@@ -367,24 +368,24 @@ public class AutoDriveApollo{
             Log.d(TAG_DRIVE, "drive right; maxDriveSpeed: " + maxDriveSpeed + "distance: " + distance);
             // Determine new target position, and pass to motor controller
             int moveCounts = (int)(distance * COUNTS_PER_INCH);
-            frontLeftTarget = (int) robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) + moveCounts;
-            frontRightTarget = (int) robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) - moveCounts;
-            backLeftTarget = (int) robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE) - moveCounts;
-            backRightTarget = (int)robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE) + moveCounts;
-            Log.d(TAG_DRIVE,"Current Position; front left: " + robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) +
-                    " front right "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) +
-                    " back left "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE)+
-                    " back right "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE));
+            frontLeftTarget = (int) robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) + moveCounts;
+            frontRightTarget = (int) robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) - moveCounts;
+            backLeftTarget = (int) robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE) - moveCounts;
+            backRightTarget = (int)robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE) + moveCounts;
+            Log.d(TAG_DRIVE,"Current Position; front left: " + robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) +
+                    " front right "+ robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) +
+                    " back left "+ robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE)+
+                    " back right "+ robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE));
             Log.d(TAG_DRIVE,"Go To Position; front left: " + frontLeftTarget +
                     " front right "+ frontRightTarget +
                     " back left "+ backLeftTarget+
                     " back right "+ backRightTarget);
             // Set Target FIRST, then turn on RUN_TO_POSITION
-            robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE, frontLeftTarget);
-            robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE, frontRightTarget);
-            robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE, backLeftTarget);
-            robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE, backRightTarget);
-            robot.SetAllDriveMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.Robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE, frontLeftTarget);
+            robot.Robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE, frontRightTarget);
+            robot.Robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE, backLeftTarget);
+            robot.Robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE, backRightTarget);
+            robot.Robot.SetAllDriveMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // Set the required driving speed  (must be positive for RUN_TO_POSITION)
             // Start driving straight, and then enter the control loop
@@ -393,10 +394,10 @@ public class AutoDriveApollo{
 
             // keep looping while we are still active, and BOTH motors are running.
             while (linearOpMode.opModeIsActive() &&
-                    (robot.IsBusy(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) &&
-                            robot.IsBusy(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) &&
-                            robot.IsBusy(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE) &&
-                            robot.IsBusy(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE))){
+                    (robot.Robot.IsBusy(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) &&
+                            robot.Robot.IsBusy(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) &&
+                            robot.Robot.IsBusy(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE) &&
+                            robot.Robot.IsBusy(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE))){
 
                 // Determine required steering to keep on heading
                 turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
@@ -415,17 +416,17 @@ public class AutoDriveApollo{
             // Stop all motion & Turn off RUN_TO_POSITION
             moveRobot(0, 0);
             Log.d(TAG_DRIVE,"Stopped!!!!!!!!!!!!!!!!!!");
-            Log.d(TAG_DRIVE,"Position at stop; front left: " + robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) +
-                    " front right "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) +
-                    " back left "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE)+
-                    " back right "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE));
+            Log.d(TAG_DRIVE,"Position at stop; front left: " + robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) +
+                    " front right "+ robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) +
+                    " back left "+ robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE)+
+                    " back right "+ robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE));
             //  sleep(3000);
             Log.d(TAG_DRIVE,"Position after stop;" +
-                    " front left: " + robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) +
-                    " front right "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) +
-                    " back left "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE)+
-                    " back right "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE));
-            robot.SetAllDriveMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    " front left: " + robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) +
+                    " front right "+ robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) +
+                    " back left "+ robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE)+
+                    " back right "+ robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE));
+            robot.Robot.SetAllDriveMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
     public void driveLeft(double maxDriveSpeed,
@@ -437,24 +438,24 @@ public class AutoDriveApollo{
             Log.d(TAG_DRIVE, "drive left; maxDriveSpeed: " + maxDriveSpeed + "distance:" + "distance: " + distance + "heading: "+ heading);
             // Determine new target position, and pass to motor controller
             int moveCounts = (int)(distance * COUNTS_PER_INCH);
-            frontLeftTarget = (int) robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) - moveCounts;
-            frontRightTarget = (int) robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) + moveCounts;
-            backLeftTarget = (int) robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE) + moveCounts;
-            backRightTarget = (int)robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE) - moveCounts;
-            Log.d(TAG_DRIVE,"Current Position; front left: " + robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) +
-                    " front right "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) +
-                    " back left "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE)+
-                    " back right "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE));
+            frontLeftTarget = (int) robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) - moveCounts;
+            frontRightTarget = (int) robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) + moveCounts;
+            backLeftTarget = (int) robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE) + moveCounts;
+            backRightTarget = (int)robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE) - moveCounts;
+            Log.d(TAG_DRIVE,"Current Position; front left: " + robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) +
+                    " front right "+ robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) +
+                    " back left "+ robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE)+
+                    " back right "+ robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE));
             Log.d(TAG_DRIVE,"Go To Position; front left: " + frontLeftTarget +
                     " front right "+ frontRightTarget +
                     " back left "+ backLeftTarget+
                     " back right "+ backRightTarget);
             // Set Target FIRST, then turn on RUN_TO_POSITION
-            robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE, frontLeftTarget);
-            robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE, frontRightTarget);
-            robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE, backLeftTarget);
-            robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE, backRightTarget);
-            robot.SetAllDriveMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
+            robot.Robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE, frontLeftTarget);
+            robot.Robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE, frontRightTarget);
+            robot.Robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE, backLeftTarget);
+            robot.Robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE, backRightTarget);
+            robot.Robot.SetAllDriveMotorsMode(DcMotor.RunMode.RUN_TO_POSITION);
 
             // Set the required driving speed  (must be positive for RUN_TO_POSITION)
             // Start driving straight, and then enter the control loop
@@ -463,10 +464,10 @@ public class AutoDriveApollo{
 
             // keep looping while we are still active, and BOTH motors are running.
             while (linearOpMode.opModeIsActive() &&
-                    (robot.IsBusy(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) &&
-                            robot.IsBusy(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) &&
-                            robot.IsBusy(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE) &&
-                            robot.IsBusy(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE))){
+                    (robot.Robot.IsBusy(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) &&
+                            robot.Robot.IsBusy(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) &&
+                            robot.Robot.IsBusy(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE) &&
+                            robot.Robot.IsBusy(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE))){
 
                 // Determine required steering to keep on heading
                 turnSpeed = getSteeringCorrection(heading, P_DRIVE_GAIN);
@@ -485,17 +486,17 @@ public class AutoDriveApollo{
             // Stop all motion & Turn off RUN_TO_POSITION
             moveRobot(0, 0);
             Log.d(TAG_DRIVE,"Stopped!!!!!!!!!!!!!!!!!!");
-            Log.d(TAG_DRIVE,"Position at stop; front left: " + robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) +
-                    " front right "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) +
-                    " back left "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE)+
-                    " back right "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE));
+            Log.d(TAG_DRIVE,"Position at stop; front left: " + robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) +
+                    " front right "+ robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) +
+                    " back left "+ robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE)+
+                    " back right "+ robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE));
             //  sleep(3000);
             Log.d(TAG_DRIVE,"Position after stop;" +
-                    " front left: " + robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) +
-                    " front right "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) +
-                    " back left "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE)+
-                    " back right "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE));
-            robot.SetAllDriveMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    " front left: " + robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) +
+                    " front right "+ robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) +
+                    " back left "+ robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE)+
+                    " back right "+ robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE));
+            robot.Robot.SetAllDriveMotorsMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
     }
 
@@ -651,10 +652,10 @@ public class AutoDriveApollo{
         {
             frontRightPower = 0.4 * (Math.abs(frontRightPower) / frontRightPower);
         }
-        robot.SetPower(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE, backLeftPower);
-        robot.SetPower(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE, backRightPower);
-        robot.SetPower(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE, frontRightPower);
-        robot.SetPower(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE, frontLeftPower);
+        robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE, backLeftPower);
+        robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE, backRightPower);
+        robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE, frontRightPower);
+        robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE, frontLeftPower);
         Log.d(TAG_DRIVE, "Wheel turn is " + turn);
         Log.d(TAG_DRIVE,"Wheel Speeds is; " +
                 " back Left Power is " + backLeftPower +
@@ -687,10 +688,10 @@ public class AutoDriveApollo{
                 " back Right Power is " + backRightPower +
                 " front Right Power" + frontRightPower +
                 " front Left Power" + frontLeftPower);
-        robot.SetPower(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE, backLeftPower);
-        robot.SetPower(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE, backRightPower);
-        robot.SetPower(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE, frontRightPower);
-        robot.SetPower(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE, frontLeftPower);
+        robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE, backLeftPower);
+        robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE, backRightPower);
+        robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE, frontRightPower);
+        robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE, frontLeftPower);
     }
     public void moveRobotRight(double drive, double turn) {
         driveSpeed = drive;     // save this value as a class member so it can be used by telemetry.
@@ -726,10 +727,10 @@ public class AutoDriveApollo{
         if (straight) {
            Log.d(TAG_DRIVE,"Motion " + "Drive Straight " );
           //  telemetry.addData("Motion", "Drive Straight");
-            Log.d(TAG_DRIVE,"Current Position; front left: " + robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) +
-                    " front right "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) +
-                    " back left "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE)+
-                    " back right "+ robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE));
+            Log.d(TAG_DRIVE,"Current Position; front left: " + robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE) +
+                    " front right "+ robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE) +
+                    " back left "+ robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE)+
+                    " back right "+ robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE));
             Log.d(TAG_DRIVE,"Go To Position; front left: " + frontLeftTarget +
                     " front right "+ frontRightTarget +
                     " back left "+ backLeftTarget+
@@ -760,7 +761,7 @@ public class AutoDriveApollo{
      * read the raw (un-offset Gyro heading) directly from the IMU
      */
     public double getRawHeading() {
-        double angles = robot.getImuRawHeading();
+        double angles = robot.Robot.getImuRawHeading();
         Log.d(TAG_DRIVE,"robot angle. " + angles);
         return angles;
     }
@@ -798,8 +799,8 @@ public class AutoDriveApollo{
         }
         //double Pos = robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT);
         */
-        robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_POS.Pos);
-        robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_COLLECT_POS.Pos);
+        robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_GARD_OPEN.Pos);
+        robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, RobotHardware_apollo.SERVO_POS.ARM_COLLECT.Pos);
         if (!Park)
         {
             driveStraight(DRIVE_SPEED,4,heading);
@@ -813,9 +814,9 @@ public class AutoDriveApollo{
         TimeOut.reset();
         while ((LIFT_IsBusy) && (TimeOut.seconds() <= TimeOutSec))
         {
-            LIFT_IsBusy = robot.IsBusy(RobotHardware_apollo.DriveMotors.LIFT);
+            LIFT_IsBusy = robot.Robot.IsBusy(RobotHardware_apollo.DriveMotors.LIFT);
         }
-        robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT_SECOND,0);
+        robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT_SECOND,0);
     }
     public void getLiftToDumpPos()
     {
@@ -832,13 +833,13 @@ public class AutoDriveApollo{
          */
         goTo(dropPixelPos);
         TimeOut.reset();
-        robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_DUMP_POS_AUTO_DRIVE.Pos);
-        LIFT_IsBusy = robot.IsBusy(RobotHardware_apollo.DriveMotors.LIFT);
+        robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, RobotHardware_apollo.SERVO_POS.ARM_DUMP_AUTO_DRIVE.Pos);
+        LIFT_IsBusy = robot.Robot.IsBusy(RobotHardware_apollo.DriveMotors.LIFT);
         while ((LIFT_IsBusy) && (TimeOut.seconds() < TimeOutSec))
         {
-            LIFT_IsBusy = robot.IsBusy(RobotHardware_apollo.DriveMotors.LIFT);
+            LIFT_IsBusy = robot.Robot.IsBusy(RobotHardware_apollo.DriveMotors.LIFT);
         }
-        robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT_SECOND,0);
+        robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT_SECOND,0);
     }
     public HuskyLens_Apollo.PropPos runPropDetection()
     {
@@ -990,19 +991,19 @@ public class AutoDriveApollo{
 
     public void goTo(int Pos)
     {
-        robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT , DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.LIFT , Pos);
-        robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT , DcMotor.RunMode.RUN_TO_POSITION);
-        int currentPosition = (int) (robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT));
+        robot.Robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT , DcMotor.RunMode.RUN_USING_ENCODER);
+        robot.Robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.LIFT , Pos);
+        robot.Robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT , DcMotor.RunMode.RUN_TO_POSITION);
+        int currentPosition = (int) (robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT));
         if (currentPosition > Pos)
         {
-            robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT ,1);
-            robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT_SECOND ,-1);
+            robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT ,1);
+            robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT_SECOND ,-1);
         }
         else
         {
-            robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT ,1);
-            robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT_SECOND ,1);
+            robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT ,1);
+            robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT_SECOND ,1);
         }
     }
     public void releasePixel(double heading,boolean holdHeading)
@@ -1011,28 +1012,28 @@ public class AutoDriveApollo{
         {
             holdHeading(TURN_SPEED,heading,0.5);
         }
-        robot.SetPosition(RobotHardware_apollo.DriveMotors.DUMP_SERVO, RobotHardware_apollo.SERVO_POS.DUMP_SERVO_OPEN.Pos);
+        robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.DUMP_SERVO, RobotHardware_apollo.SERVO_POS.DUMP_UNLOAD_PIXEL.Pos);
         linearOpMode.sleep(2000);
         driveLeft(DRIVE_SPEED,7,heading);
         //holdHeading(TURN_SPEED,heading,1);
-        robot.SetPosition(RobotHardware_apollo.DriveMotors.DUMP_SERVO, RobotHardware_apollo.SERVO_POS.DUMP_SERVO_CLOSE.Pos);
+        robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.DUMP_SERVO, RobotHardware_apollo.SERVO_POS.DUMP_LOAD_PIXEL.Pos);
         //holdHeading(TURN_SPEED,heading,1);
     }
     public void dropCollection()
     {
-        robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION,-1);
+        robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION,-1);
         linearOpMode.sleep(500);
-        robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION,0);
+        robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION,0);
     }
     public boolean TestEncoders()
     {
         boolean TestEncoders = true;
         if (MoterTime.seconds() >= 1)
         {
-            double new_BACK_RIGHT_DRIVE_Pos = robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE);
-            double new_BACK_LEFT_DRIVE_Pos = robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE);
-            double new_FRONT_RIGHT_DRIVE_Pos = robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE);
-            double new_FRONT_LEFT_DRIVE_Pos = robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE);
+            double new_BACK_RIGHT_DRIVE_Pos = robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE);
+            double new_BACK_LEFT_DRIVE_Pos = robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE);
+            double new_FRONT_RIGHT_DRIVE_Pos = robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE);
+            double new_FRONT_LEFT_DRIVE_Pos = robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE);
 
             if ((new_FRONT_LEFT_DRIVE_Pos == old_FRONT_LEFT_DRIVE_Pos) ||
                     (new_BACK_LEFT_DRIVE_Pos == old_BACK_LEFT_DRIVE_Pos) ||

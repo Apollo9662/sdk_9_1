@@ -314,7 +314,7 @@ public class AutoDriveApollo_RedLeft_Parameter extends LinearOpMode{
         autoDriveApollo.holdHeading(autoDriveApollo.DRIVE_SPEED, heading, 0.5);
         //driveStraight(DRIVE_SPEED -0.2, 2, heading);
         //sleep(1000);
-        autoDriveApollo.robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_SERVO_GARD_OPEN_POS.Pos);
+        autoDriveApollo.robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_GARD_OPEN.Pos);
         //sleep(1000);
         /*
         robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT, DcMotor.RunMode.RUN_USING_ENCODER);
@@ -344,7 +344,7 @@ public class AutoDriveApollo_RedLeft_Parameter extends LinearOpMode{
     public void driveToProb_RedLeft(HuskyLens_Apollo.PropPos probPos)
     {
         autoDriveApollo.MoterTime.reset();
-        autoDriveApollo.robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION,1);
+        autoDriveApollo.robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION,1);
         switch (probPos)
         {
             case UP:
@@ -372,7 +372,7 @@ public class AutoDriveApollo_RedLeft_Parameter extends LinearOpMode{
                 break;
         }
         autoDriveApollo.holdHeading(autoDriveApollo.DRIVE_SPEED,0,0.5);
-        autoDriveApollo.robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION,0);
+        autoDriveApollo.robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION,0);
     }
     public void runAutoDrive_RedLeft()
     {

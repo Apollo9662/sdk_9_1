@@ -82,11 +82,11 @@ public class UnitTest_LiftStop_Servo extends LinearOpMode {
         {
             if(gamepad1.a == true)
             {
-                robot.SetPosition(RobotHardware_apollo.DriveMotors.LIFT_STOP_SERVO, RobotHardware_apollo.SERVO_POS.LIFT_STOP_SERVO_OPEN.Pos);
+                robot.SetPosition(RobotHardware_apollo.DriveMotors.LIFT_STOP_SERVO, RobotHardware_apollo.SERVO_POS.LIFT_UNLOCK.Pos);
             }
             else if(gamepad1.y == true)
             {
-                robot.SetPosition(RobotHardware_apollo.DriveMotors.LIFT_STOP_SERVO, RobotHardware_apollo.SERVO_POS.LIFT_STOP_SERVO_CLOSE.Pos);
+                robot.SetPosition(RobotHardware_apollo.DriveMotors.LIFT_STOP_SERVO, RobotHardware_apollo.SERVO_POS.LIFT_LOCK.Pos);
             }
             telemetry.addData("servo Position is  ","(%.2f)" + robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT_STOP_SERVO));
             telemetry.update();

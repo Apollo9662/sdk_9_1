@@ -86,7 +86,7 @@ public class UnitTest_PlaneServo_Conf extends LinearOpMode {
                 if (press == false)
                 {
                     press = true;
-                    robot.SetPosition(RobotHardware_apollo.DriveMotors.PLANE_SERVO, robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.PLANE_SERVO) + 0.01);
+                    robot.SetPosition(RobotHardware_apollo.DriveMotors.DRONE_SERVO, robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.DRONE_SERVO) + 0.01);
 
                 }
             }
@@ -95,7 +95,7 @@ public class UnitTest_PlaneServo_Conf extends LinearOpMode {
                 if (press == false)
                 {
                     press = true;
-                    robot.SetPosition(RobotHardware_apollo.DriveMotors.PLANE_SERVO, robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.PLANE_SERVO) - 0.01);
+                    robot.SetPosition(RobotHardware_apollo.DriveMotors.DUMP_SERVO, robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.DUMP_SERVO) - 0.01);
 
                 }
             }
@@ -125,7 +125,7 @@ public class UnitTest_PlaneServo_Conf extends LinearOpMode {
             {
                 press = false;
             }
-            telemetry.addData("servo Position is ", "(%.2f)", robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.PLANE_SERVO));
+            telemetry.addData("servo Position is ", "(%.2f)", robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.DRONE_SERVO));
             telemetry.update();
         }
     }

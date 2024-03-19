@@ -29,26 +29,6 @@
 
 package org.firstinspires.ftc.teamcode.RobotHardware_apollo;
 
-import android.util.Log;
-
-import com.arcrobotics.ftclib.command.Robot;
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.dfrobot.HuskyLens;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
-import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
-import org.firstinspires.ftc.teamcode.R;
-
 /*
  * This file works in conjunction with the External Hardware Class sample called: ConceptExternalHardwareClass.java
  * Please read the explanations in that Sample about how to use this class definition.
@@ -68,13 +48,15 @@ import org.firstinspires.ftc.teamcode.R;
  *
  */
 
-public class RobotMove_apollo {
-    public RobotHardware_apollo Robot = new RobotHardware_apollo();
-    public RobotMoveServo MoveServo = new RobotMoveServo(Robot);
-    public RobotSetPower SetPower = new RobotSetPower(Robot);
-    public RobotSetPosMotor SetPosMotor = new RobotSetPosMotor(Robot);
-    public RobotSetPosServo SetPosServo = new RobotSetPosServo(Robot);
-    public RobotGetPosMotor GetPosMotor = new RobotGetPosMotor(Robot);
-    public RobotSetModeMotor SetMode = new RobotSetModeMotor(Robot);
-    public RobotGetPosServo GetPosServo = new RobotGetPosServo(Robot);
+public class RobotGetPosServo{
+    RobotHardware_apollo robot;
+    public RobotGetPosServo(RobotHardware_apollo myRobot)
+    {
+        robot = myRobot;
+    }
+    public double drone() {return (robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.DRONE_SERVO));}
+    public double dump() {return (robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.DUMP_SERVO));}
+    public double arm() {return (robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO));}
+    public double gard() {return (robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO));}
+    public double liftLocker() {return (robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT_STOP_SERVO));}
 }

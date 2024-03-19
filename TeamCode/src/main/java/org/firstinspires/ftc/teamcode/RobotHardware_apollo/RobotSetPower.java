@@ -66,21 +66,17 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  *
  */
 
-public class RobotSetPower extends RobotHardware_apollo{
-    public void setLiftPower(double power)
+public class RobotSetPower{
+    RobotHardware_apollo robot;
+    public RobotSetPower(RobotHardware_apollo myRobot)
     {
-        SetPower(DriveMotors.LIFT, power);
+        robot = myRobot;
     }
-    public void setSecondLiftPower(double power)
-    {
-        SetPower(DriveMotors.LIFT_SECOND, power);
-    }
-    public void setCollectionPower(double power)
-    {
-        SetPower(DriveMotors.LIFT_SECOND, power);
-    }
-    public void setBackLeftDrivePower(double power){SetPower(DriveMotors.BACK_LEFT_DRIVE, power);}
-    public void setBackRightDrivePower(double power){SetPower(DriveMotors.BACK_RIGHT_DRIVE, power);}
-    public void setFrontLeftDrivePower(double power){SetPower(DriveMotors.FRONT_LEFT_DRIVE, power);}
-    public void setFrontRightDrivePower(double power){SetPower(DriveMotors.FRONT_RIGHT_DRIVE, power);}
+    public void lift(double power) {robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT, power);}
+    public void secondLift(double power) {robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT_SECOND, power);}
+    public void collection(double power) {robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT_SECOND, power);}
+    public void backLeftDrive(double power){robot.SetPower(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE, power);}
+    public void backRightDrive(double power){robot.SetPower(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE, power);}
+    public void frontLeftDrive(double power){robot.SetPower(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE, power);}
+    public void frontRightDrive(double power){robot.SetPower(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE, power);}
 }

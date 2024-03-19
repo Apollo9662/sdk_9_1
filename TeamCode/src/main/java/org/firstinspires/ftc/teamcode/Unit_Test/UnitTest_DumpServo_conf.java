@@ -82,7 +82,7 @@ public class UnitTest_DumpServo_conf extends OpMode {
     public void init() {
         gamepadEx1 = new GamepadEx(gamepad1);
         robot.init(hardwareMap,false,false);
-        robot.SetPosition(RobotHardware_apollo.DriveMotors.DUMP_SERVO, RobotHardware_apollo.SERVO_POS.DUMP_SERVO_CLOSE.Pos);
+        robot.SetPosition(RobotHardware_apollo.DriveMotors.DUMP_SERVO, RobotHardware_apollo.SERVO_POS.DRONE_LOAD.Pos);
     }
 
     @Override

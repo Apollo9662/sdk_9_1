@@ -76,18 +76,18 @@ public class UnitTest_DumpServo extends LinearOpMode {
     @Override
     public void runOpMode() {
         robot.init(hardwareMap,false,false);
-        robot.SetPosition(RobotHardware_apollo.DriveMotors.DUMP_SERVO, RobotHardware_apollo.SERVO_POS.DUMP_SERVO_CLOSE.Pos);
+        robot.SetPosition(RobotHardware_apollo.DriveMotors.DUMP_SERVO, RobotHardware_apollo.SERVO_POS.DRONE_LOAD.Pos);
         waitForStart();
         while (opModeIsActive())
         {
 
             if(gamepad1.a == true)
             {
-                robot.SetPosition(RobotHardware_apollo.DriveMotors.DUMP_SERVO, RobotHardware_apollo.SERVO_POS.DUMP_SERVO_CLOSE.Pos);
+                robot.SetPosition(RobotHardware_apollo.DriveMotors.DUMP_SERVO, RobotHardware_apollo.SERVO_POS.DUMP_LOAD_PIXEL.Pos);
             }
             else if(gamepad1.y == true)
             {
-                robot.SetPosition(RobotHardware_apollo.DriveMotors.DUMP_SERVO, RobotHardware_apollo.SERVO_POS.DUMP_SERVO_OPEN.Pos);
+                robot.SetPosition(RobotHardware_apollo.DriveMotors.DUMP_SERVO, RobotHardware_apollo.SERVO_POS.DUMP_UNLOAD_PIXEL.Pos);
             }
             telemetry.addData("servo Position is  ","(%.2f)" , robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.DUMP_SERVO));
             telemetry.update();

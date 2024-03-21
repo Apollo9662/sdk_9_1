@@ -20,13 +20,13 @@ import org.firstinspires.ftc.teamcode.RobotHardware_apollo.RobotHardware_apollo;
 
 @Config
 @TeleOp (name="PID Collection dash borad", group="Unit Test")
-@Disabled
+//@Disabled
 public class PID_Collection_dashBoard extends OpMode {
     RobotHardware_apollo robot = new RobotHardware_apollo();
     private PIDController controller;
     public static double Kp = 0, Ki = 0, Kd = 0;
-    public static double Kf = 0;
-    public static int target = 0;
+    public static double Kf = 12.8;
+    public static double target = 2400;
     double highScore = 0;
     double score = 0;
     public static int offset = 50;
@@ -38,7 +38,7 @@ public class PID_Collection_dashBoard extends OpMode {
         controller = new PIDController(Kp, Ki, Kd);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot.init(hardwareMap, false,false);
-
+        telemetry.addLine("pidf: " + robot.collection.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
     }
 
     @Override
@@ -46,14 +46,18 @@ public class PID_Collection_dashBoard extends OpMode {
     {
         //velocity = robot.GetVelocity(RobotHardware_apollo.DriveMotors.COLLECTION);
 
+        robot.collection.setVelocityPIDFCoefficients(Kp,Ki,Kd,Kf);
         controller.setPID(Kp,Ki,Kd);
         velocity = robot.GetVelocity(RobotHardware_apollo.DriveMotors.COLLECTION);
         double pid = controller.calculate(velocity,target);
         double ff = target * Kf;
         double power = pid + ff;
-        power = Range.clip(power,-1,1);
+
+        //power *= 12.0  / robot.getBatteryVoltage();
+        //power = Range.clip(power,-1,1);
         //robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION,power);
         robot.SetVelocity(RobotHardware_apollo.DriveMotors.COLLECTION, target);
+        telemetry.addLine("pidf: " + robot.collection.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
         telemetry.addData("velocity" , velocity);
         telemetry.addData("target", target);
         telemetry.addData("highScore" , highScore);

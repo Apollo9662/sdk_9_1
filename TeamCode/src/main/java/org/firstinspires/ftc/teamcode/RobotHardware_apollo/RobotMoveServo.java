@@ -86,12 +86,12 @@ public class RobotMoveServo{
     }
     public void lockLift()
     {
-        robot.liftLockStat = RobotHardware_apollo.LiftLockStat.LOCK;
+        robot.liftLockStat = RobotHardware_apollo.LiftLockStat.LOCKED;
         robot.SetPosition(RobotHardware_apollo.DriveMotors.LIFT_STOP_SERVO, RobotHardware_apollo.SERVO_POS.LIFT_LOCK.Pos);
     }
     public void unlockLift()
     {
-        robot.liftLockStat = RobotHardware_apollo.LiftLockStat.UNLOCK;
+        robot.liftLockStat = RobotHardware_apollo.LiftLockStat.UNLOCKED;
         robot.SetPosition(RobotHardware_apollo.DriveMotors.LIFT_STOP_SERVO, RobotHardware_apollo.SERVO_POS.LIFT_UNLOCK.Pos);
     }
     public void openGard()

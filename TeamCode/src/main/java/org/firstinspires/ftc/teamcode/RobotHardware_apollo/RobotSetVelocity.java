@@ -66,17 +66,17 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
  *
  */
 
-public class RobotSetPower{
+public class RobotSetVelocity{
     RobotHardware_apollo robot;
-    public RobotSetPower(RobotHardware_apollo myRobot)
+    public RobotSetVelocity(RobotHardware_apollo myRobot)
     {
         robot = myRobot;
     }
-    public void lift(double power) {robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT, power);}
-    public void secondLift(double power) {robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT_SECOND, power);}
-    public void collection(double power) {robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION, power);}
-    public void backLeftDrive(double power){robot.SetPower(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE, power);}
-    public void backRightDrive(double power){robot.SetPower(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE, power);}
-    public void frontLeftDrive(double power){robot.SetPower(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE, power);}
-    public void frontRightDrive(double power){robot.SetPower(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE, power);}
+    public void lift(double velocity) {robot.SetVelocity(RobotHardware_apollo.DriveMotors.LIFT, velocity);}
+    public void secondLift(double velocity) {robot.SetVelocity(RobotHardware_apollo.DriveMotors.LIFT_SECOND, velocity);}
+    public void collection(double velocity) {robot.SetVelocity(RobotHardware_apollo.DriveMotors.COLLECTION, velocity);}
+    public void backLeftDrive(double velocity){robot.SetVelocity(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE, velocity);}
+    public void backRightDrive(double velocity){robot.SetVelocity(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE, velocity);}
+    public void frontLeftDrive(double velocity){robot.SetVelocity(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE, velocity);}
+    public void frontRightDrive(double velocity){robot.SetVelocity(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE, velocity);}
 }

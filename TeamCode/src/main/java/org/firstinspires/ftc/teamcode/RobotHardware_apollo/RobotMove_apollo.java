@@ -72,6 +72,7 @@ public class RobotMove_apollo {
     public RobotHardware_apollo Robot = new RobotHardware_apollo();
     public RobotMoveServo MoveServo = new RobotMoveServo(Robot);
     public RobotSetPower SetPower = new RobotSetPower(Robot);
+    public RobotSetVelocity SetVelocity = new RobotSetVelocity(Robot);
     public RobotSetPosMotor SetPosMotor = new RobotSetPosMotor(Robot);
     public RobotSetPosServo SetPosServo = new RobotSetPosServo(Robot);
     public RobotGetPosMotor GetPosMotor = new RobotGetPosMotor(Robot);

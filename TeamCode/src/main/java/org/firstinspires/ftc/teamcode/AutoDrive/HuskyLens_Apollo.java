@@ -59,7 +59,7 @@ public class HuskyLens_Apollo
         Log.d(TAG_HUSKYLENS ,"find prop color " + propColor.toString());
         if (propColor == PropColor.RED)
         {
-            propId = 1;
+            propId = 2;
         }
         else {
             propId = 1;

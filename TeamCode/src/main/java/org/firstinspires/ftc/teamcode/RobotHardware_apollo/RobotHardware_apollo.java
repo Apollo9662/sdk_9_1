@@ -41,6 +41,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -76,14 +77,14 @@ public class RobotHardware_apollo {
         DUMP}
     public enum LiftLockStat
     {
-        LOCK,
-        UNLOCK
+        LOCKED,
+        UNLOCKED
     }
     public LiftLockStat liftLockStat;
     public ArmState armState;
     public double headingOffset = 0;
     /* Declare OpMode members. */
-    private LinearOpMode myOpMode = null;   // gain access to methods in the calling OpMode.
+    private HardwareMap myOpMode = null;   // gain access to methods in the calling OpMode.
     // Define Motor and Servo objects  (Make them private so they can't be accessed externally)
     final String TAG_HARDWARE = "HardwareApollo";
     private HuskyLens huskyLens;
@@ -99,7 +100,7 @@ public class RobotHardware_apollo {
     private DcMotorEx frontLeftDrive = null;
     private DcMotorEx frontRightDrive = null;
     private DcMotorEx backRightDrive = null;
-    private DcMotorEx collection = null;
+    public DcMotorEx collection = null;
     private DcMotorEx lift = null;
     private DcMotorEx liftSecond = null;  // private     public DcMotorEx lift = null; // private
 
@@ -134,9 +135,9 @@ public class RobotHardware_apollo {
         ARM_COLLECT (1.0),
         ARM_DUMP (0.4389),
         ARM_DUMP_AUTO_DRIVE (0.44),
-        ARM_GARD_OPEN (0.45),
+        ARM_GARD_OPEN (0.46),
         ARM_GARD_CLOSE (0.5),
-        ARM_GARD_HALF_OPEN (0.48);
+        ARM_GARD_HALF_OPEN (0.475);
 
         public Double Pos;
 
@@ -166,6 +167,7 @@ public class RobotHardware_apollo {
      */
     public boolean init(HardwareMap apolloHardwareMap, boolean initDrive , boolean initImu)
     {
+        myOpMode = apolloHardwareMap;
         boolean intSucceeded = true;
         if (initDrive)
         {
@@ -230,6 +232,7 @@ public class RobotHardware_apollo {
         armGardServo.setDirection(Servo.Direction.FORWARD);
         collection.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         collection.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        collection.setVelocityPIDFCoefficients(0,0,0,12.8);
         lift.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         lift.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         liftSecond.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -252,6 +255,7 @@ public class RobotHardware_apollo {
         dumpServo.setPosition(SERVO_POS.DUMP_LOAD_PIXEL.Pos);
         drone_state = DRONE_STATE.LOADED;
         planeServo.setPosition(SERVO_POS.DRONE_LOAD.Pos);
+        liftLockStat = LiftLockStat.UNLOCKED;
         liftStopServo.setPosition(SERVO_POS.LIFT_UNLOCK.Pos);
 
     }
@@ -417,6 +421,42 @@ public class RobotHardware_apollo {
             case COLLECTION:
             {
                 return collection.getMode();
+            }
+            default:
+                return (null);
+        }
+    }
+    public DcMotor.ZeroPowerBehavior GetZeroPowerBehavior(DriveMotors motor)
+    {
+        switch (motor) {
+
+            case BACK_LEFT_DRIVE:
+            {
+                return backLeftDrive.getZeroPowerBehavior();
+            }
+            case BACK_RIGHT_DRIVE:
+            {
+                return backRightDrive.getZeroPowerBehavior();
+            }
+            case FRONT_LEFT_DRIVE:
+            {
+                return frontLeftDrive.getZeroPowerBehavior();
+            }
+            case FRONT_RIGHT_DRIVE:
+            {
+                return frontRightDrive.getZeroPowerBehavior();
+            }
+            case LIFT:
+            {
+                return lift.getZeroPowerBehavior();
+            }
+            case LIFT_SECOND:
+            {
+                return liftSecond.getZeroPowerBehavior();
+            }
+            case COLLECTION:
+            {
+                return collection.getZeroPowerBehavior();
             }
             default:
                 return (null);
@@ -732,6 +772,17 @@ public class RobotHardware_apollo {
     {
         headingOffset = getImuRawHeading();
     }
+    public double getBatteryVoltage() {
+        double result = Double.POSITIVE_INFINITY;
+        for (VoltageSensor sensor : myOpMode.voltageSensor) {
+            double voltage = sensor.getVoltage();
+            if (voltage > 0) {
+                result = Math.min(result, voltage);
+            }
+        }
+        return result;
+    }
 }
+
 
 

@@ -294,7 +294,7 @@ public class AutoDriveApollo_RedRight_Parameter extends LinearOpMode {
             }
             break;
             case LEFT: {
-                autoDriveApollo.driveLeft(autoDriveApollo.DRIVE_SPEED, 4.5, heading);
+                autoDriveApollo.driveLeft(autoDriveApollo.DRIVE_SPEED, 3.5, heading);
                 //autoDriveApollo.holdHeading(autoDriveApollo.TURN_SPEED, heading, 0.5);
                 autoDriveApollo.getLiftToDumpPos();
                 autoDriveApollo.holdHeading(autoDriveApollo.TURN_SPEED, heading, 0.5);

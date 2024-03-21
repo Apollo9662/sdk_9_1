@@ -87,7 +87,7 @@ import org.firstinspires.ftc.teamcode.RobotHardware_apollo.RobotHardware_apollo;
  */
 
 @Autonomous(name="red left", group="Apollo")
-@Disabled
+//@Disabled
 public class AutoDriveApollo_RedLeft_Parameter extends LinearOpMode{
 
     /* Declare OpMode members. */
@@ -125,10 +125,7 @@ public class AutoDriveApollo_RedLeft_Parameter extends LinearOpMode{
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetry.addLine("robot finish init");
         telemetry.update();
-
-        waitForStart();
-        autoDriveApollo.MoterTime.reset();
-        autoDriveApollo.TimeOut.reset();
+        detectedPropPos = autoDriveApollo.runPropDetection();
 
         //driveLeft(DRIVE_SPEED,10,0);
         //driveRight(DRIVE_SPEED,10,0);

@@ -164,7 +164,9 @@ public class AutoDriveApollo_RedLeft_Parameter extends LinearOpMode{
                 break;
                 case LEFT:
                 {
+                    autoDriveApollo.robot.SetPower.collection(1);
                     autoDriveApollo.driveLeft(autoDriveApollo.DRIVE_SPEED,10,heading);
+                    autoDriveApollo.robot.SetPower.collection(0);
                 }
                 break;
             }
@@ -227,8 +229,10 @@ public class AutoDriveApollo_RedLeft_Parameter extends LinearOpMode{
             case LEFT:
             {
                 //driveRight(DRIVE_SPEED,2,0);4
+                autoDriveApollo.driveLeft(autoDriveApollo.DRIVE_SPEED,3,90);
                 autoDriveApollo.turnToHeading(autoDriveApollo.TURN_SPEED,90);
                 heading = 90;
+
                 autoDriveApollo.releasePixel(heading , false);
 
                 /*
@@ -269,7 +273,7 @@ public class AutoDriveApollo_RedLeft_Parameter extends LinearOpMode{
             }
             break;
             case LEFT: {
-                autoDriveApollo.driveRight(autoDriveApollo.DRIVE_SPEED, 15, heading);
+                autoDriveApollo.driveRight(autoDriveApollo.DRIVE_SPEED, 19, heading);
             }
             break;
             case UP: {
@@ -310,7 +314,10 @@ public class AutoDriveApollo_RedLeft_Parameter extends LinearOpMode{
     public void driveToProb_RedLeft(HuskyLens_Apollo.PropPos probPos)
     {
         autoDriveApollo.MoterTime.reset();
-        autoDriveApollo.robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION,1);
+        if (probPos != HuskyLens_Apollo.PropPos.LEFT)
+        {
+            autoDriveApollo.robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION,0.5);
+        }
         switch (probPos)
         {
             case UP:
@@ -325,15 +332,19 @@ public class AutoDriveApollo_RedLeft_Parameter extends LinearOpMode{
             case LEFT:
                 autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED,-4,0);
                 //autoDriveApollo.holdHeading(autoDriveApollo.DRIVE_SPEED,0,0.5);
-                autoDriveApollo.driveRight(autoDriveApollo.DRIVE_SPEED,11,0);
+                autoDriveApollo.driveRight(autoDriveApollo.DRIVE_SPEED,4,0);
                 autoDriveApollo.holdHeading(autoDriveApollo.DRIVE_SPEED,0,0.5);
-                autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED,-19,0);
+                autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED,-17,0);
                 //autoDriveApollo.holdHeading(autoDriveApollo.DRIVE_SPEED,0,0.5);
                 //autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED,-10,0);
                 //autoDriveApollo.holdHeading(autoDriveApollo.DRIVE_SPEED,0,0.5);
                 //autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED,10,0);
                 autoDriveApollo.holdHeading(autoDriveApollo.DRIVE_SPEED,0,0.5);
                 autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED,-7,0);
+                autoDriveApollo.robot.SetPower.collection(1);
+                autoDriveApollo.turnToHeadingApollo(autoDriveApollo.TURN_SPEED,90);
+                autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED,-5,90);
+                autoDriveApollo.robot.SetPower.collection(0);
                 break;
             case RIGHT:
                 autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED,-23,0);
@@ -349,10 +360,11 @@ public class AutoDriveApollo_RedLeft_Parameter extends LinearOpMode{
     {
         autoDriveApollo.runTime.reset();
         autoDriveApollo.time.reset();
-        detectedPropPos = autoDriveApollo.detectProp();
+        autoDriveApollo.dropCollection();
+        //detectedPropPos = autoDriveApollo.detectProp();
         //autoDriveApollo.robot.SetPower(RobotHardware_apollo.DriveMotors.COLLECTION, 1);
         driveToProb_RedLeft(detectedPropPos);
-        //dropPixelAtLine_RedLeft(detectedPropPos);
+        dropPixelAtLine_RedLeft(detectedPropPos);
         Park_RedLeft(90,detectedPropPos, autoDriveApollo.Park);
         if (autoDriveApollo.DropPixelAtBack)
         {

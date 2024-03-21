@@ -277,7 +277,7 @@ public class AutoDriveApollo_BlueRight_Parametar extends LinearOpMode {
             }
             break;
         }
-        autoDriveApollo.getLiftToDumpPos();
+        autoDriveApollo.getLiftToFarDumpPos();
         autoDriveApollo.holdHeading(autoDriveApollo.TURN_SPEED,heading,1);
         switch (probPos) {
             case RIGHT: {

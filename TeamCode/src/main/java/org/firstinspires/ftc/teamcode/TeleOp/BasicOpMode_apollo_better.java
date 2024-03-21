@@ -45,6 +45,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.AutoDrive.AutoDriveApollo;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.RobotHardware_apollo.RobotHardware_apollo;
@@ -95,6 +96,7 @@ public class BasicOpMode_apollo_better extends OpMode {
     final int THIRD_LIFT = 1630;
     final int FOURTH_LIFT = 2200;
     int liftMaxHight = 3420;
+    public static int size = 400;
     final double POWER_LIFT = 1;
     double liftPower = 0;
     boolean inPosition = false;
@@ -137,6 +139,7 @@ public class BasicOpMode_apollo_better extends OpMode {
     public void init() {
         gamepadEx1 = new GamepadEx(gamepad1);
         gamepadEx2 = new GamepadEx(gamepad2);
+        telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         boolean initIMU = robot.Robot.init(hardwareMap,false,true);
         robot_Ftclib.init(hardwareMap, false);
@@ -173,25 +176,27 @@ public class BasicOpMode_apollo_better extends OpMode {
     public void loop() {
 
         drive();
-        telemetry.addData("gard stat is  " + robot.Robot.armGardState +  " gard Pos is " , "(%.4f)" , armGardServoPos);
-        telemetry.addData("arm stat is  " + robot.Robot.armState + " arm Pos is " , "(%.4f)" , armServoPos);
-        telemetry.addData("gard current pos is " , "(%.4f)" , robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO));
-        telemetry.addData("arm current Pos is " , "(%.4f)" , robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO));
-        telemetry.addLine("field Centric Drive stats is " + fieldCentricDrive);
+        //telemetry.addData("gard stat is  " + robot.Robot.armGardState +  " gard Pos is " , "(%.4f)" , armGardServoPos);
+        //telemetry.addData("arm stat is  " + robot.Robot.armState + " arm Pos is " , "(%.4f)" , armServoPos);
+        //telemetry.addData("gard current pos is " , "(%.4f)" , robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO));
+        //telemetry.addData("arm current Pos is " , "(%.4f)" , robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO));
         if (fieldCentricDrive)
         {
+            telemetry.addLine("field Centric Drive stats is " + fieldCentricDrive);
             telemetry.addLine("heading is " + heading);
         }
         telemetry.addLine("control Mod stats is " + controlMod);
-        telemetry.addLine("up Side Down Mod stats is " + upSideDownMod);
-        telemetry.addLine("lift stop servo stat is " + robot.Robot.liftLockStat);
-        telemetry.addLine("lift Pos is " + robot.GetPosMotor.lift());
-        double velocity = robot.Robot.GetVelocity(RobotHardware_apollo.DriveMotors.COLLECTION);
-        telemetry.addData("velocity" , velocity);
-        telemetry.addData("collectionSpeed", collectionSpeed);
-        telemetry.addData("collectionBackSpeed", collectionBackSpeed);
-        telemetry.addData("-collectionSpeed", -collectionSpeed);
-        telemetry.addData("-collectionBackSpeed", -collectionBackSpeed);
+        //telemetry.addLine("up Side Down Mod stats is " + upSideDownMod);
+        if (robot.Robot.liftLockStat == RobotHardware_apollo.LiftLockStat.LOCKED)
+        {
+            telemetry.addLine("<h1 style=\"font-size:"+size+"px;\">lift stop servo stat is CLOSED</h1>");
+        }
+        else
+        {
+            telemetry.addLine("<h1 style=\"font-size:"+size+"px;\" ><b>lift stop servo stat is <mark>OPEN</mark></b></h1>");
+        }
+        //telemetry.addLine("lift stop servo stat is " + robot.Robot.liftLockStat);
+        //telemetry.addLine("lift Pos is " + robot.GetPosMotor.lift());
         //+
         // telemetry.addLine("lift zero power behavior is " + robot.Robot.GetZeroPowerBehavior(RobotHardware_apollo.DriveMotors.LIFT));
         telemetry.update();

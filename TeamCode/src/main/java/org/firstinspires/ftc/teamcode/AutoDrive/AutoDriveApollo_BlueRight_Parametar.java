@@ -186,18 +186,18 @@ public class AutoDriveApollo_BlueRight_Parametar extends LinearOpMode {
             }
                 autoDriveApollo.holdHeading(autoDriveApollo.TURN_SPEED,heading,0.5);
                 if (autoDriveApollo.DropPixelAtBack)
-                {   while (autoDriveApollo.runTime.seconds() <= autoDriveApollo.TimeToDropPixel)
+                {   while (autoDriveApollo.runTime.seconds() <= autoDriveApollo.TimeToDropPixel && ((opModeIsActive())))
                     {
-
+                        Log.d(autoDriveApollo.TAG_DRIVE,"whiting to park");
                     }
                     autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED,23 * 3,heading);
                     autoDriveApollo.holdHeading(autoDriveApollo.TURN_SPEED,heading,0.5);
                 }
                 else
                 {
-                    while (autoDriveApollo.runTime.seconds() <= autoDriveApollo.TimeToPark)
+                    while (autoDriveApollo.runTime.seconds() <= autoDriveApollo.TimeToPark && ((opModeIsActive())))
                     {
-
+                        Log.d(autoDriveApollo.TAG_DRIVE,"whiting to park and drop pixel");
                     }
                     autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED,23 * 4,heading);
                     autoDriveApollo.holdHeading(autoDriveApollo.TURN_SPEED,heading,0.5);
@@ -234,7 +234,7 @@ public class AutoDriveApollo_BlueRight_Parametar extends LinearOpMode {
             case LEFT:
             {
                 autoDriveApollo.turnToHeadingApollo(autoDriveApollo.TURN_SPEED,-90);
-                autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED,5,-90);
+                autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED,6,-90);
                 autoDriveApollo.holdHeading(autoDriveApollo.TURN_SPEED,-90,0.5);
                 autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED,-5,-90);
                 autoDriveApollo.turnToHeadingApollo(autoDriveApollo.TURN_SPEED,0);
@@ -265,7 +265,7 @@ public class AutoDriveApollo_BlueRight_Parametar extends LinearOpMode {
         switch (probPos) {
             case RIGHT: {
                 //driveRight(DRIVE_SPEED, 7, heading);
-                autoDriveApollo.driveLeft(autoDriveApollo.DRIVE_SPEED,15,heading);
+                autoDriveApollo.driveLeft(autoDriveApollo.DRIVE_SPEED,20,heading);
             }
             break;
             case LEFT: {

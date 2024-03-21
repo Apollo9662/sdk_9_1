@@ -237,7 +237,7 @@ public class AutoDriveApollo_BlueLeft_Parameter extends LinearOpMode{
                 autoDriveApollo.holdHeading(autoDriveApollo.TURN_SPEED,heading,0.5);
                 //autoDriveApollo.driveRight(autoDriveApollo.DRIVE_SURF_SPEED, 3, heading);
                 //autoDriveApollo.holdHeading(autoDriveApollo.DRIVE_SPEED, heading, 0.5);
-                autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED, 15, heading);
+                autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED, 13, heading);
             }
             break;
             case LEFT: {

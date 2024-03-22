@@ -188,7 +188,7 @@ public class AutoDriveApollo_RedLeft_Parameter extends LinearOpMode{
                 }
                 autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED,23*4,heading);
                 autoDriveApollo.holdHeading(autoDriveApollo.TURN_SPEED,heading,0.5);
-                autoDriveApollo.driveRight(autoDriveApollo.DRIVE_SPEED,1,heading);
+                //autoDriveApollo.driveRight(autoDriveApollo.DRIVE_SPEED,1,heading);
             }
             //autoDriveApollo.holdHeading(autoDriveApollo.TURN_SPEED,heading,0.5);
             //autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED  -0.2,22,heading);
@@ -290,7 +290,7 @@ public class AutoDriveApollo_RedLeft_Parameter extends LinearOpMode{
         autoDriveApollo.holdHeading(autoDriveApollo.TURN_SPEED, heading, 1);
         switch (probPos) {
             case RIGHT: {
-                autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED, 4, heading);
+                //autoDriveApollo.driveStraight(autoDriveApollo.DRIVE_SPEED, 4, heading);
             }
             break;
             case UP:

@@ -72,6 +72,7 @@ public class BasicOpMode_apollo_better extends OpMode {
 
     private GamepadEx gamepadEx1;
     private GamepadEx gamepadEx2;
+    Gamepad.RumbleEffect liftLockRumble;
 
 
     private ElapsedTime runtime = new ElapsedTime();
@@ -83,6 +84,7 @@ public class BasicOpMode_apollo_better extends OpMode {
     boolean press = false;
     boolean pressCollection = false;
     boolean pressCollectionConf = false;
+    boolean pressDrone = false;
     double armServoPos = 0;
     double armGardServoPos = 0;
     boolean pressCollectionServo = false;
@@ -96,7 +98,6 @@ public class BasicOpMode_apollo_better extends OpMode {
     final int THIRD_LIFT = 1630;
     final int FOURTH_LIFT = 2200;
     int liftMaxHight = 3420;
-    public static int size = 400;
     final double POWER_LIFT = 1;
     double liftPower = 0;
     boolean inPosition = false;
@@ -139,6 +140,12 @@ public class BasicOpMode_apollo_better extends OpMode {
     public void init() {
         gamepadEx1 = new GamepadEx(gamepad1);
         gamepadEx2 = new GamepadEx(gamepad2);
+        liftLockRumble = new Gamepad.RumbleEffect.Builder()
+                .addStep(1, 1.0, 500)  //  Rumble right motor 100% for 500 mSec
+                .addStep(0.0, 0, 300)  //  Pause for 300 mSec
+                .addStep(1, 1.0, 500)  //  Rumble left motor 100% for 250 mSec
+                .addStep(0.0,0,300)
+                .build();
         telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         boolean initIMU = robot.Robot.init(hardwareMap,false,true);
@@ -185,16 +192,18 @@ public class BasicOpMode_apollo_better extends OpMode {
             telemetry.addLine("field Centric Drive stats is " + fieldCentricDrive);
             telemetry.addLine("heading is " + heading);
         }
-        telemetry.addLine("control Mod stats is " + controlMod);
+        telemetry.addLine("<h1>control Mod stats is " + controlMod + "</h1>");
         //telemetry.addLine("up Side Down Mod stats is " + upSideDownMod);
         if (robot.Robot.liftLockStat == RobotHardware_apollo.LiftLockStat.LOCKED)
         {
-            telemetry.addLine("<h1 style=\"font-size:"+size+"px;\">lift stop servo stat is CLOSED</h1>");
+            telemetry.addLine("<h1>lift stop servo stat is CLOSED</h1>");
         }
         else
         {
-            telemetry.addLine("<h1 style=\"font-size:"+size+"px;\" ><b>lift stop servo stat is <mark>OPEN</mark></b></h1>");
+            telemetry.addLine("<h1>lift stop servo stat is OPEN</h1>");
         }
+        double velocity = robot.Robot.GetVelocity(RobotHardware_apollo.DriveMotors.COLLECTION);
+        telemetry.addData("velocity" , velocity);
         //telemetry.addLine("lift stop servo stat is " + robot.Robot.liftLockStat);
         //telemetry.addLine("lift Pos is " + robot.GetPosMotor.lift());
         //+
@@ -321,6 +330,20 @@ public class BasicOpMode_apollo_better extends OpMode {
                     if (gamepadEx2.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON))
                     {
                        lunchDrone();
+                        gamepad2.rumble(1, 1, 500);
+                    }
+                    if (gamepad2.share)
+                    {
+                        if (!pressDrone)
+                        {
+                            pressDrone = true;
+                            robot.MoveServo.closeGard();
+                        }
+
+                    }
+                    else
+                    {
+                        pressDrone = false;
                     }
                     if (gamepad1.dpad_down)
                     {
@@ -485,6 +508,7 @@ public class BasicOpMode_apollo_better extends OpMode {
                     if (pixelEmission != 0)
                     {
                         collectionMotor(collectionBackSpeed);
+                        gamepad2.rumble(0.1,0.1,Gamepad.RUMBLE_DURATION_CONTINUOUS);
                     }
                     else if (pixelCollection == true)
                     {
@@ -495,10 +519,12 @@ public class BasicOpMode_apollo_better extends OpMode {
 
                         }
                         collectionMotor(-collectionSpeed);
+                        gamepad2.rumble(0.1,0.1,Gamepad.RUMBLE_DURATION_CONTINUOUS);
                     }
                     else
                     {
                         collectionMotor(0);
+                        gamepad2.stopRumble();
                     }
                 }
             }
@@ -534,42 +560,44 @@ public class BasicOpMode_apollo_better extends OpMode {
             robot.MoveServo.openGard();
         }
         public void DumpPixel(){
-            Log.d(TAG_COLLECTION,"armServoState is before " + robot.Robot.armState);
-            Log.d(TAG_COLLECTION,"armServoGardState is before " + robot.Robot.armGardState);
-            if(robot.Robot.armGardState == RobotHardware_apollo.ArmGardState.CLOSE)
+            if (robot.Robot.armState != RobotHardware_apollo.ArmState.COLLECT)
             {
-                robot.MoveServo.halfOpenGard();
-                try
+                Log.d(TAG_COLLECTION,"armServoState is before " + robot.Robot.armState);
+                Log.d(TAG_COLLECTION,"armServoGardState is before " + robot.Robot.armGardState);
+                if(robot.Robot.armGardState == RobotHardware_apollo.ArmGardState.CLOSE)
                 {
-                    //Thread.sleep(400);
-                }  catch (Exception e)
-                {
-                    Log.d(TAG_COLLECTION_THREAD, "catch exception: " + e.toString());
-                }
-            }
-            else if(robot.Robot.armGardState == RobotHardware_apollo.ArmGardState.HALF_OPEN)
-            {
-                robot.MoveServo.openGard();
-            }
-            else if (robot.Robot.armGardState == RobotHardware_apollo.ArmGardState.OPEN)
-            {
-                robot.MoveServo.closeGard();
-            }
-            if (robot.GetPosServo.arm() != RobotHardware_apollo.SERVO_POS.ARM_DUMP.Pos)
-            {
-                try
-                {
-                    Thread.sleep(100);
+                    robot.MoveServo.halfOpenGard();
+                    try
+                    {
+                        //Thread.sleep(400);
                     }  catch (Exception e)
-                {
-                    Log.d(TAG_COLLECTION_THREAD, "catch exception: " + e.toString());
+                    {
+                        Log.d(TAG_COLLECTION_THREAD, "catch exception: " + e.toString());
+                    }
                 }
-                robot.MoveServo.dumpPixel();
+                else if(robot.Robot.armGardState == RobotHardware_apollo.ArmGardState.HALF_OPEN)
+                {
+                    robot.MoveServo.openGard();
+                }
+                else if (robot.Robot.armGardState == RobotHardware_apollo.ArmGardState.OPEN)
+                {
+                    robot.MoveServo.closeGard();
+                }
+                if (robot.GetPosServo.arm() != RobotHardware_apollo.SERVO_POS.ARM_DUMP.Pos)
+                {
+                    try
+                    {
+                        Thread.sleep(100);
+                    }  catch (Exception e)
+                    {
+                        Log.d(TAG_COLLECTION_THREAD, "catch exception: " + e.toString());
+                    }
+                    robot.MoveServo.dumpPixel();
+                }
+
+                Log.d(TAG_COLLECTION,"armServoState is next " + robot.Robot.armState);
+                Log.d(TAG_COLLECTION,"armServoGardState is next " + robot.Robot.armGardState);
             }
-
-            Log.d(TAG_COLLECTION,"armServoState is next " + robot.Robot.armState);
-            Log.d(TAG_COLLECTION,"armServoGardState is next " + robot.Robot.armGardState);
-
             //}
         }
     }
@@ -610,6 +638,7 @@ public class BasicOpMode_apollo_better extends OpMode {
                     switch (robot.Robot.liftLockStat) {
                         case UNLOCKED:
                             robot.MoveServo.lockLift();
+                            gamepad1.rumble(1, 1, 500);
                             Log.d(TAG_LIFT, "lift Pos at lock is " + robot.GetPosMotor.lift());
                             break;
                         case LOCKED:
@@ -646,6 +675,7 @@ public class BasicOpMode_apollo_better extends OpMode {
                         Log.d(TAG_LIFT, "lift up pos " + robot.GetPosMotor.lift());
                         robot.SetMode.lift(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
                         liftPower = POWER_LIFT;
+                        robot.Robot.armState = RobotHardware_apollo.ArmState.DUMP;
                         inPosition = false;
                     } else {
                         if (inPosition == false) {

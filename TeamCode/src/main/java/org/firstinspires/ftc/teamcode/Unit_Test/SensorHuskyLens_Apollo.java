@@ -69,6 +69,8 @@ public class SensorHuskyLens_Apollo extends LinearOpMode {
     int middle = huskyLens_apollo.middle;
     int maxTop = huskyLens_apollo.maxTop;
     int minTop = huskyLens_apollo.minTop;
+    public int minWidth = huskyLens_apollo.minWidth;
+    public int minHeight = huskyLens_apollo.minHeight;
     public int maxWidth = huskyLens_apollo.maxWidth;
     public int maxHeight = huskyLens_apollo.maxHeight;
     final String TAG_HUSKYLENS = "HuskyLens_Apollo";
@@ -211,7 +213,7 @@ public class SensorHuskyLens_Apollo extends LinearOpMode {
         {
             for (int i = 0; i < blocks.length; i++)
             {
-                if ((blocks[i].height <= maxHeight) && (blocks[i].width <= maxWidth))
+                if ((blocks[i].height <= maxHeight) && (blocks[i].width <= maxWidth) && (blocks[i].height >= minHeight) && (blocks[i].width >= minWidth))
                 {
                     if ((blocks[i].x < middle) && (blocks[i].top < maxTop) && (blocks[i].top > minTop))
                     {

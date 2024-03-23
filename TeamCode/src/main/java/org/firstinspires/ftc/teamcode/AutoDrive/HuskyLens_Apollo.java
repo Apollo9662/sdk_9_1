@@ -13,10 +13,12 @@ public class HuskyLens_Apollo
     final String TAG_HUSKYLENS = "HuskyLens_Apollo";
     //private final int READ_PERIOD = 1;
     public int middle = 185;
-    public int maxTop = 60;
+    public int maxTop = 80;
     public int minTop = 25;
-    public int maxWidth = 60;
-    public int maxHeight = 60;
+    public int minWidth = 0;
+    public int minHeight = 0;
+    public int maxWidth = 80;
+    public int maxHeight = 80;
     public int numOfBlocks;
     private boolean isPress = false;
     private enum HuskyLens_State {TAG_RECOGNITION,
@@ -84,7 +86,7 @@ public class HuskyLens_Apollo
                 Log.d(TAG_HUSKYLENS,  ", width " + blocks[i].width + " , height " + blocks[i].height);
                 if ((propId == blocks[i].id))
                 {
-                    if ((blocks[i].height <= maxHeight) && (blocks[i].width <= maxWidth))
+                    if ((blocks[i].height <= maxHeight) && (blocks[i].width <= maxWidth) && (blocks[i].height >= minHeight) && (blocks[i].width >= minWidth))
                     {
                         if ((blocks[i].x < middle) && (blocks[i].top < maxTop) && (blocks[i].top > minTop))
                         {

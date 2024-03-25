@@ -107,7 +107,7 @@ public class AutoDriveApollo{
     public ElapsedTime TurnTimeOut = new ElapsedTime();
     public ElapsedTime MoterTime = new ElapsedTime();
     boolean encodersAreWorking;
-    public double TimeOutSec = 3;
+    public double TimeOutSec = 5;
     public double TurnTimeOutSec = 5;
     public double TimeToPark = 30 - 5;
     public double TimeToDropPixel = 15;
@@ -119,7 +119,7 @@ public class AutoDriveApollo{
     public double propDetectionTimeOut = 2;
     public boolean Park = true;
     public boolean DropPixelAtBack = true;
-    public final int dropPixelPos = 460;
+    public final int dropPixelPos = 662;
     public final int dropFarPixelPos = 800;
     public final int dropPixelPosSecond = dropPixelPos + 200;
     public final String TAG_TIME = "timer";
@@ -834,7 +834,8 @@ public class AutoDriveApollo{
          */
         goTo(dropPixelPos);
         TimeOut.reset();
-        robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, RobotHardware_apollo.SERVO_POS.ARM_DUMP_AUTO_DRIVE.Pos);
+        robot.MoveServo.dumpPixel();
+        //robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, RobotHardware_apollo.SERVO_POS.ARM_DUMP_AUTO_DRIVE.Pos);
         LIFT_IsBusy = robot.Robot.IsBusy(RobotHardware_apollo.DriveMotors.LIFT);
         while ((LIFT_IsBusy) && (TimeOut.seconds() < TimeOutSec) && (linearOpMode.opModeIsActive()))
         {
@@ -857,7 +858,8 @@ public class AutoDriveApollo{
          */
         goTo(dropFarPixelPos);
         TimeOut.reset();
-        robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, RobotHardware_apollo.SERVO_POS.ARM_DUMP_AUTO_DRIVE.Pos);
+        robot.MoveServo.dumpPixel();
+        //robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, RobotHardware_apollo.SERVO_POS.ARM_DUMP_AUTO_DRIVE.Pos);
         LIFT_IsBusy = robot.Robot.IsBusy(RobotHardware_apollo.DriveMotors.LIFT);
         while ((LIFT_IsBusy) && (TimeOut.seconds() < TimeOutSec) && ((linearOpMode.opModeIsActive())))
         {
@@ -1015,19 +1017,13 @@ public class AutoDriveApollo{
 
     public void goTo(int Pos)
     {
-        robot.Robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT , DcMotor.RunMode.RUN_USING_ENCODER);
-        robot.Robot.SetTargetPosition(RobotHardware_apollo.DriveMotors.LIFT , Pos);
-        robot.Robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT , DcMotor.RunMode.RUN_TO_POSITION);
-        int currentPosition = (int) (robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.LIFT));
-        if (currentPosition > Pos)
-        {
-            robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT ,1);
-            robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT_SECOND ,-1);
-        }
-        else
-        {
-            robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT ,1);
-            robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT_SECOND ,1);
+        int currentPosition = (int) robot.GetPosMotor.lift();
+        if (currentPosition > Pos) {
+            robot.SetPosMotor.lift(Pos,1);
+            robot.SetPower.secondLift(-1);
+        } else {
+            robot.SetPosMotor.lift(Pos,1);
+            robot.SetPower.secondLift(1);
         }
     }
     public void releasePixel(double heading,boolean holdHeading)

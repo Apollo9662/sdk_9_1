@@ -92,9 +92,9 @@ public class BasicOpMode_apollo_better extends OpMode {
     boolean pressLift = false;
     boolean pressDrive = false;
     boolean LIFT_IsBusy;
-    final int FIRST_LIFT = 460;
+    final int FIRST_LIFT = 662;
     double servoCurrentPosition;
-    final int SECOND_LIFT = 880;
+    final int SECOND_LIFT = 860;
     final int THIRD_LIFT = 1630;
     final int FOURTH_LIFT = 2200;
     int liftMaxHight = 3420;

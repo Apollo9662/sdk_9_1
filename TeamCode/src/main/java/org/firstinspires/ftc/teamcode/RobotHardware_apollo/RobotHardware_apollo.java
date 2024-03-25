@@ -134,7 +134,7 @@ public class RobotHardware_apollo {
         DRONE_LUNCH (0.25),
         ARM_COLLECT (1.0),
         ARM_DUMP (0.4389),
-        ARM_DUMP_AUTO_DRIVE (0.44),
+        //ARM_DUMP_AUTO_DRIVE (0.44),
         ARM_GARD_OPEN (0.46),
         ARM_GARD_CLOSE (0.5),
         ARM_GARD_HALF_OPEN (0.475);

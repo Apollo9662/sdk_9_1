@@ -140,12 +140,6 @@ public class BasicOpMode_apollo_better extends OpMode {
     public void init() {
         gamepadEx1 = new GamepadEx(gamepad1);
         gamepadEx2 = new GamepadEx(gamepad2);
-        liftLockRumble = new Gamepad.RumbleEffect.Builder()
-                .addStep(1, 1.0, 500)  //  Rumble right motor 100% for 500 mSec
-                .addStep(0.0, 0, 300)  //  Pause for 300 mSec
-                .addStep(1, 1.0, 500)  //  Rumble left motor 100% for 250 mSec
-                .addStep(0.0,0,300)
-                .build();
         telemetry.setDisplayFormat(Telemetry.DisplayFormat.HTML);
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         boolean initIMU = robot.Robot.init(hardwareMap,false,true);

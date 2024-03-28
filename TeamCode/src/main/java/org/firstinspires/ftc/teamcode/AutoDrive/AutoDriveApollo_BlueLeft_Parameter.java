@@ -127,6 +127,7 @@ public class AutoDriveApollo_BlueLeft_Parameter extends LinearOpMode{
 
         detectedPropPos = autoDriveApollo.runPropDetection();
 
+        autoDriveApollo.liftTread.start();
         runAutoDrive_blueLeft();
 
 
@@ -137,6 +138,7 @@ public class AutoDriveApollo_BlueLeft_Parameter extends LinearOpMode{
         sleep(1000);
         telemetry.addData("Path", "Complete");
         telemetry.update();
+        autoDriveApollo.liftTread.interrupt();
         //sleep(1000);  // Pause to display last telemetry message.
     }
     public void Park_blueLeft(int heading, HuskyLens_Apollo.PropPos propPos, boolean park)
@@ -354,7 +356,7 @@ public class AutoDriveApollo_BlueLeft_Parameter extends LinearOpMode{
         dropPixelAtLine_blueLeft(detectedPropPos);
         driveToBackStage_blueLeft(-90, detectedPropPos);
         sleep(500);
-        autoDriveApollo.getReadyForTeleOp(-90);
+        autoDriveApollo.getReadyForTeleOp(-90,false);
         Park_blueLeft(-90,detectedPropPos, autoDriveApollo.Park);
         Log.d(autoDriveApollo.TAG_TIME, "the final time is " + autoDriveApollo.time.seconds());
     }

@@ -132,6 +132,7 @@ public class AutoDriveApollo_RedLeft_Parameter extends LinearOpMode{
 
         //if (opModeIsActive() == true)
         //{
+        autoDriveApollo.liftTread.start();
         runAutoDrive_RedLeft();
 
 
@@ -142,6 +143,7 @@ public class AutoDriveApollo_RedLeft_Parameter extends LinearOpMode{
         sleep(1000);
         telemetry.addData("Path", "Complete");
         telemetry.update();
+        autoDriveApollo.liftTread.interrupt();
         //sleep(1000);  // Pause to display last telemetry message.
     }
     public void Park_RedLeft(int heading, HuskyLens_Apollo.PropPos propPos, boolean park)
@@ -386,7 +388,7 @@ public class AutoDriveApollo_RedLeft_Parameter extends LinearOpMode{
         {
             driveToBackStage_RedLeft(90, detectedPropPos);
             sleep(500);
-            autoDriveApollo.getReadyForTeleOp(90);
+            autoDriveApollo.getReadyForTeleOp(90,false);
         }
         Log.d(autoDriveApollo.TAG_TIME, "the final time is " + autoDriveApollo.time.seconds());
     }

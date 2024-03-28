@@ -131,7 +131,7 @@ public class AutoDriveApollo_RedRight_Parameter extends LinearOpMode {
         telemetry.update();
 
         detectedPropPos = autoDriveApollo.runPropDetection();
-
+        autoDriveApollo.liftTread.start();
         runAutoDrive_redRight();
         //}
         //driveStraight(DRIVE_SPEED, 23 * 2, 0 );
@@ -159,6 +159,7 @@ public class AutoDriveApollo_RedRight_Parameter extends LinearOpMode {
         sleep(1000);
         telemetry.addData("Path", "Complete");
         telemetry.update();
+        autoDriveApollo.liftTread.interrupt();
         //sleep(1000);  // Pause to display last telemetry message.
     }
     public void Park_redRight(int heading, HuskyLens_Apollo.PropPos propPos, boolean park)
@@ -387,7 +388,7 @@ public class AutoDriveApollo_RedRight_Parameter extends LinearOpMode {
         //autoDriveApollo.holdHeading(autoDriveApollo.DRIVE_SPEED,-270,1);
         driveToBackStage_redRight(-270, detectedPropPos);
         sleep(500);
-        autoDriveApollo.getReadyForTeleOp(-270);
+        autoDriveApollo.getReadyForTeleOp(-270,false);
         Park_redRight(-270,detectedPropPos, autoDriveApollo.Park);
         Log.d(autoDriveApollo.TAG_TIME, "the final time is " + autoDriveApollo.time.seconds());
     }

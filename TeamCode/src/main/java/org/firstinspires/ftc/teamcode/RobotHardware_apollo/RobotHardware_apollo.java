@@ -37,6 +37,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -46,6 +47,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 /*
@@ -91,6 +93,7 @@ public class RobotHardware_apollo {
     private BNO055IMU imu = null;
     private TouchSensor touchSensor1 = null;
     private TouchSensor touchSensor2 = null;
+    private DistanceSensor sensorDistance = null;
     private Servo armServo = null;
     private Servo dumpServo = null;
     private Servo planeServo = null;
@@ -218,6 +221,7 @@ public class RobotHardware_apollo {
         liftSecond = apolloHardwareMap.get(DcMotorEx.class, "second_lift");
         //touchSensor1 = apolloHardwareMap.get(TouchSensor.class, "sensor_touch1");
         touchSensor2 = apolloHardwareMap.get(TouchSensor.class, "sensor_touch");
+        sensorDistance = apolloHardwareMap.get(DistanceSensor.class, "sensor_distance");
         armServo = apolloHardwareMap.get(Servo.class, "arm_servo");//0
         liftStopServo = apolloHardwareMap.get(Servo.class, "lift_stop_servo");//5
         planeServo = apolloHardwareMap.get(Servo.class, "plane_servo");//
@@ -781,6 +785,10 @@ public class RobotHardware_apollo {
             }
         }
         return result;
+    }
+    public double getDistance(DistanceUnit DistanceUnit)
+    {
+        return sensorDistance.getDistance(DistanceUnit);
     }
 }
 

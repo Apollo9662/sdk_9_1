@@ -191,10 +191,17 @@ public class BasicOpMode_apollo_better extends OpMode {
         */
         if (fieldCentricDrive)
         {
-            telemetry.addLine("field Centric Drive stats is " + fieldCentricDrive);
-            telemetry.addLine("heading is " + heading);
+            telemetry.addLine("<h1> field Centric Drive stats is " + fieldCentricDrive + "</h1>");
+            telemetry.addLine("<h1> heading is " + heading + "</h1>");
         }
-        telemetry.addLine("<h1>control Mod stats is " + controlMod + "</h1>");
+        if (controlMod)
+        {
+            telemetry.addLine("<h1>control Mod stats is SLOW</h1>");
+        }
+        else
+        {
+            telemetry.addLine("<h1>control Mod stats is FAST</h1>");
+        }
         //telemetry.addLine("up Side Down Mod stats is " + upSideDownMod);
         if (robot.Robot.liftLockStat == RobotHardware_apollo.LiftLockStat.LOCKED)
         {
@@ -204,8 +211,8 @@ public class BasicOpMode_apollo_better extends OpMode {
         {
             telemetry.addLine("<h1>lift stop servo stat is OPEN</h1>");
         }
-        double velocity = robot.Robot.GetVelocity(RobotHardware_apollo.DriveMotors.COLLECTION);
-        telemetry.addData("velocity" , velocity);
+        //double velocity = robot.Robot.GetVelocity(RobotHardware_apollo.DriveMotors.COLLECTION);
+        //telemetry.addData("velocity" , velocity);
         //telemetry.addLine("lift stop servo stat is " + robot.Robot.liftLockStat);
         //telemetry.addLine("lift Pos is " + robot.GetPosMotor.lift());
         //+

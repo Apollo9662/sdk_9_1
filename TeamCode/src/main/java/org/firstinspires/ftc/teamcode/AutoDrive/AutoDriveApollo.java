@@ -31,11 +31,8 @@ package org.firstinspires.ftc.teamcode.AutoDrive;
 
 import android.util.Log;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -119,6 +116,8 @@ public class AutoDriveApollo{
     public double propDetectionTimeOut = 2;
     public boolean Park = true;
     public boolean DropPixelAtBack = true;
+    public boolean collectSecondPixel = true;
+    public boolean collectFirstPixel = true;
     public final int dropPixelPos = 662;
     public final int dropFarPixelPos = 800;
     public final int dropPixelPosSecond = dropPixelPos + 200;

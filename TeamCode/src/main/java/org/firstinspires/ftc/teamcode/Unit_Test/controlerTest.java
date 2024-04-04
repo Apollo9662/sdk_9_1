@@ -10,6 +10,8 @@ public class controlerTest extends LinearOpMode
 {
     public void runOpMode()
     {
+        boolean touchpad = false;
+        boolean ps = false;
         boolean dpad_up = false;
         boolean dpad_right = false;
         boolean dpad_left = false;
@@ -31,6 +33,8 @@ public class controlerTest extends LinearOpMode
 
         while (opModeIsActive())
         {
+             touchpad = gamepad1.touchpad;
+             ps = gamepad1.ps;
              dpad_up = gamepad1.dpad_up;
              dpad_down = gamepad1.dpad_down;
              dpad_left = gamepad1.dpad_left;
@@ -52,8 +56,14 @@ public class controlerTest extends LinearOpMode
             {
                 telemetry.addLine("dpad_up press");
             }
-
-
+            if (ps == true)
+            {
+                telemetry.addLine("ps press");
+            }
+            if (touchpad == true)
+            {
+                telemetry.addLine("touchpad press");
+            }
             if (dpad_down == true)
             {
                 telemetry.addLine("dpad_down press");

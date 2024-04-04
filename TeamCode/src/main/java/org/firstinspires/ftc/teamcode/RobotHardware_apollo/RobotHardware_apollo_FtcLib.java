@@ -162,6 +162,35 @@ public class RobotHardware_apollo_FtcLib {
         backRightDrive.setZeroPowerBehavior(myZeroPowerBehavior);
         backLeftDrive.setZeroPowerBehavior(myZeroPowerBehavior);
     }
+    public void SetPower(RobotHardware_apollo.DriveMotors motor, double Power)
+    {
+        switch (motor)
+        {
+
+            case BACK_LEFT_DRIVE:
+            {
+                backLeftDrive.set(Power);
+            }
+            break;
+            case BACK_RIGHT_DRIVE:
+            {
+                backRightDrive.set(Power);
+            }
+            break;
+            case FRONT_LEFT_DRIVE:
+            {
+                frontLeftDrive.set(Power);
+            }
+            break;
+            case FRONT_RIGHT_DRIVE:
+            {
+                frontRightDrive.set(Power);
+            }
+            break;
+            default:
+                break;
+        }
+    }
 
 
 }

@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode.AutoDrive;
 import android.util.Log;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
@@ -105,6 +106,7 @@ public class AutoDriveApollo {
     public ElapsedTime TimeOut = new ElapsedTime();
     public ElapsedTime TurnTimeOut = new ElapsedTime();
     public ElapsedTime MoterTime = new ElapsedTime();
+    public ElapsedTime PixelCollectionTimeOut = new ElapsedTime();
     boolean encodersAreWorking;
     public double TimeOutSec = 5;
     public double TurnTimeOutSec = 5;
@@ -116,7 +118,7 @@ public class AutoDriveApollo {
     public double old_FRONT_LEFT_DRIVE_Pos = 0;
     public boolean LIFT_IsBusy;
     public double propDetectionTimeOut = 2;
-    public boolean Park = true;
+    public boolean Park = false;
     public boolean DropPixelAtBack = true;
     public boolean collectSecondPixel = true;
     public boolean collectFirstPixel = true;
@@ -181,8 +183,8 @@ public class AutoDriveApollo {
     // These constants define the desired driving/control characteristics
     // They can/should be tweaked to suit the specific robot drive train.
     public final double MIN_SIDE_DRIVE_POWER = 0.4;
-    public final double DRIVE_SPEED = 0.6;
-    //public final double     DRIVE_SURF_SPEED        = 0.9 * 0.65;// Max driving speed for better distance accuracy.
+    public final double DRIVE_SPEED = 0.8;
+    public final double DRIVE_SURF_SPEED = 0.6;// Max driving speed for better distance accuracy.
     public final double TURN_SPEED = 0.8 * 0.65;
     public final double TURN_SPEED_FIX = 0.4; // Max Turn speed to limit turn rate
     public static final double HEADING_THRESHOLD = 0.5;    // How close must the heading get to the target before moving to next step.
@@ -195,12 +197,20 @@ public class AutoDriveApollo {
     public final double P_TURN_GAIN = 0.01;     // Larger is more responsive, but also less stable ; PLAY WITH THIS
     public final double P_DRIVE_GAIN = 0.03;      // Larger is more responsive, but also less stable
 
-    RobotMove_apollo robot = new RobotMove_apollo();
+    RobotMove_apollo robot;
     HuskyLens_Apollo robotHuskLens = new HuskyLens_Apollo();
     LinearOpMode linearOpMode;
 
-    public AutoDriveApollo(LinearOpMode myLinearOpMode) {
+
+    public AutoDriveApollo(LinearOpMode myLinearOpMode)
+    {
+        RobotMove_apollo robot = new RobotMove_apollo();
         linearOpMode = myLinearOpMode;
+    }
+    public AutoDriveApollo(LinearOpMode myLinearOpMode, RobotMove_apollo myRobot)
+    {
+        linearOpMode = myLinearOpMode;
+        RobotMove_apollo robot = myRobot;
     }
 
     //@Override
@@ -799,11 +809,18 @@ public class AutoDriveApollo {
         //robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_GARD_OPEN.Pos);
         //robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, RobotHardware_apollo.SERVO_POS.ARM_COLLECT.Pos);
         if ((!Park) || (!collectSecondPixel)) {
-            driveStraight(DRIVE_SPEED, 4, heading);
+            //driveStraight(DRIVE_SPEED, 4, heading);
         } else {
             //linearOpMode.sleep(750);
         }
         liftTread.SetPosition(0);
+        TimeOut.reset();
+        while ((false == liftTread.liftGotToPos()) && (TimeOut.seconds() < TimeOutSec)) {
+            linearOpMode.sleep(1);
+        };
+        driveStraight(DRIVE_SPEED, 4, heading);
+
+
         //sleep(1000);
         //TimeOut.reset();
         //while ((LIFT_IsBusy) && (TimeOut.seconds() <= TimeOutSec) && (linearOpMode.opModeIsActive())) {
@@ -811,7 +828,7 @@ public class AutoDriveApollo {
         //}
         //robot.Robot.SetPower(RobotHardware_apollo.DriveMotors.LIFT_SECOND, 0);
     }
-    public void getReadyForSecondPixel(double heading, boolean collectSecondPixel) {
+    public void getReadyForSecondPixel(double heading) {
         driveStraight(DRIVE_SPEED - 0.2, -7, heading);
         //robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO, RobotHardware_apollo.SERVO_POS.ARM_GARD_OPEN.Pos);
         //robot.Robot.SetPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO, RobotHardware_apollo.SERVO_POS.ARM_COLLECT.Pos);
@@ -1061,6 +1078,8 @@ public class AutoDriveApollo {
         private int desierdPos = 0;
         private boolean goToDesierdPos = false;
         private boolean liftInPosition = false;
+        private boolean collectPixel = false;
+        private int numOfPixelsToCollect = 0;
         public LiftThread() {
             this.setName("LiftThread");
         }
@@ -1073,11 +1092,33 @@ public class AutoDriveApollo {
                     goTo(desierdPos);
                     goToDesierdPos = false;
                 }
+                if (collectPixel)
+                {
+                    if (pixelInCollection != numOfPixelsToCollect)
+                    {
+                        robot.SetPower.collection(-1);
+                    }
+                    else if (!duringCollection)
+                    {
+                        robot.SetPower.collection(1);
+                    }
+
+                }
             }
         }
         public boolean liftGotToPos()
         {
             return (liftInPosition);
+        }
+        public void StartCollectingPixels(int numOfPixels)
+        {
+            collectPixel = true;
+            numOfPixelsToCollect = numOfPixels;
+        }
+        public void stopCollectingPixels()
+        {
+            collectPixel = false;
+            robot.SetPower.collection(0);
         }
         public void SetPosition(int pos)
         {

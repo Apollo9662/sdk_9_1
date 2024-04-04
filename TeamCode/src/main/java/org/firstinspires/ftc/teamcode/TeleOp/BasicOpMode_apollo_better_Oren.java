@@ -30,23 +30,22 @@
 package org.firstinspires.ftc.teamcode.TeleOp;
 
 import android.util.Log;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.arcrobotics.ftclib.command.button.GamepadButton;
-import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.AutoDrive.AutoDriveApollo;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.RobotHardware_apollo.RobotHardware_apollo;
 import org.firstinspires.ftc.teamcode.RobotHardware_apollo.RobotHardware_apollo_FtcLib;
@@ -66,17 +65,19 @@ import org.firstinspires.ftc.teamcode.RobotHardware_apollo.RobotMove_apollo;
  * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
  */
 @Config
-@TeleOp(name="TeleOp apollo", group="TeleOp")
+@TeleOp(name="TeleOp apollo Oren", group="TeleOp")
 //@Disabled
-public class BasicOpMode_apollo_better extends OpMode {
+public class BasicOpMode_apollo_better_Oren extends OpMode {
 
     private GamepadEx gamepadEx1;
     private GamepadEx gamepadEx2;
-    Gamepad.RumbleEffect liftLockRumble;
+    //Gamepad.RumbleEffect liftLockRumble;
 
 
     private ElapsedTime runtime = new ElapsedTime();
     private ElapsedTime TimeOut = new ElapsedTime();
+    private ElapsedTime CollectionAutoTimer = new ElapsedTime();
+    private ElapsedTime PixelInDetectionTimeOut = new ElapsedTime();
     private double TimeOutSec = 3;
     //double Test = 0;
     public static double collectionSpeed = 2600;
@@ -91,6 +92,7 @@ public class BasicOpMode_apollo_better extends OpMode {
     boolean pressCollectionLift = false;
     boolean pressLift = false;
     boolean pressDrive = false;
+    boolean pressAutoCollection = false;
     boolean LIFT_IsBusy;
     final int FIRST_LIFT = 662;
     double servoCurrentPosition;
@@ -99,6 +101,17 @@ public class BasicOpMode_apollo_better extends OpMode {
     final int FOURTH_LIFT = 2200;
     int liftMaxHight = 3420;
     final double POWER_LIFT = 1;
+    public double turnSpeed = 0;
+    public double driveSpeed = 0;
+    public double targetHeading = 0;
+    public double desiredHeading = 90;
+    public double headingOffset = 0;
+    public double headingError = 0;
+    public double robotHeading = 0;
+    public final double P_TURN_GAIN = 0.03;     // Larger is more responsive, but also less stable ; PLAY WITH THIS
+    public final double P_DRIVE_GAIN = 0.03;
+    public final double TURN_SPEED = 0.8 * 0.65;
+    double collectionLastPos = 0;
     double liftPower = 0;
     boolean inPosition = false;
     final String TAG_LIFT = "Lift";
@@ -109,6 +122,7 @@ public class BasicOpMode_apollo_better extends OpMode {
     int currentPosition;
     final double LIFT_TIMEOUT_SEC = 5;
     final double LIFT_TIMEOUT_STAY_SEC = 2;
+    int numOfPixelsToCollect = 0;
     boolean controlMod = false;
     public static boolean upSideDownMod = false;
     boolean fieldCentricDrive = false;
@@ -130,6 +144,9 @@ public class BasicOpMode_apollo_better extends OpMode {
         SECOND
     }
     LiftXStat liftXStat;
+    int pixelInCollection = 0;
+    int pixelNotInCollection = 0;
+    boolean duringCollection = false;
     boolean stayInPosIsActive = false;
     //ConceptTensorFlowObjectDetection_Apollo detection;
     //RobotHardware_apollo robot = new RobotHardware_apollo();
@@ -158,7 +175,9 @@ public class BasicOpMode_apollo_better extends OpMode {
         robot_Ftclib.SetAllMotorsZeroPowerBehavior(Motor.ZeroPowerBehavior.BRAKE);
         //robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT, DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         //robot.Robot.SetMode(RobotHardware_apollo.DriveMotors.LIFT, DcMotor.RunMode.RUN_USING_ENCODER);
-
+        robot.Robot.collectionStats = RobotHardware_apollo.CollectionStats.NORMAL;
+        robot.Robot.SetMode(RobotHardware_apollo.DriveMotors.COLLECTION, DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.Robot.SetMode(RobotHardware_apollo.DriveMotors.COLLECTION, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
         telemetry.addData("Status", "Initialized");
@@ -183,11 +202,8 @@ public class BasicOpMode_apollo_better extends OpMode {
         telemetry.addData("gard current pos is " , "(%.4f)" , robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.ARM_GARD_SERVO));
         telemetry.addData("arm current Pos is " , "(%.4f)" , robot.Robot.GetCurrentPosition(RobotHardware_apollo.DriveMotors.ARM_SERVO));
         */
-        if (fieldCentricDrive)
-        {
-            telemetry.addLine("<h1> field Centric Drive stats is " + fieldCentricDrive + "</h1>");
-            telemetry.addLine("<h1> heading is " + heading + "</h1>");
-        }
+        //telemetry.addLine("<h1> field Centric Drive stats is " + fieldCentricDrive + "</h1>");
+        telemetry.addLine("<h1> heading is " + heading + "</h1>");
         if (controlMod)
         {
             telemetry.addLine("<h1>control Mod stats is SLOW</h1>");
@@ -205,6 +221,8 @@ public class BasicOpMode_apollo_better extends OpMode {
         {
             telemetry.addLine("<h1>lift stop servo stat is OPEN</h1>");
         }
+        telemetry.addData("<h1> num of Pixels is ", pixelInCollection + "</h1>");
+        telemetry.addData("<h1> collection stat is  ", robot.Robot.collectionStats + "</h1>");
         //double AMP = robot.Robot.GetCurrent(RobotHardware_apollo.DriveMotors.COLLECTION);
         //telemetry.addData("AMP" , AMP);
         //telemetry.addLine("lift stop servo stat is " + robot.Robot.liftLockStat);
@@ -223,84 +241,57 @@ public class BasicOpMode_apollo_better extends OpMode {
         }
 
     }
-    private void drive()
-    {
+    private void drive() {
         gamepadEx1.readButtons();
         gamepadEx2.readButtons();
 
         double forwardSpeed;
         double turnSpeed;
         double strafeSpeed;
-        if (!upSideDownMod)
-        {
-            forwardSpeed   = gamepadEx1.getLeftY();  // Note: pushing stick forward gives negative value
-            strafeSpeed =  gamepadEx1.getLeftX();
-            turnSpeed     =  -gamepadEx1.getRightX();
-        }
-        else
-        {
-            forwardSpeed   = -gamepadEx1.getLeftY();  // Note: pushing stick forward gives negative value
-            strafeSpeed =  gamepadEx1.getLeftX();
-            turnSpeed     =  -gamepadEx1.getRightX();
-        }
-        if ((gamepadEx1.wasJustPressed(GamepadKeys.Button.BACK)) && (!gamepadEx1.isDown(GamepadKeys.Button.B)) && (!gamepadEx1.isDown(GamepadKeys.Button.A)))
-        {
-            //robot.Robot.ResetYaw();
-            robot.Robot.ResetYaw();
-            fieldCentricDrive = !fieldCentricDrive;
-        }
+        forwardSpeed = gamepadEx1.getLeftY();  // Note: pushing stick forward gives negative value
+        strafeSpeed = gamepadEx1.getLeftX();
+        turnSpeed = -gamepadEx1.getRightX();
         heading = robot.Robot.getImuRawHeading();
-        if (gamepad1.y)
-        {
-            if(!pressDrive)
-            {
+        if ((gamepad1.share) || gamepad1.back){
+            if (!pressDrive) {
+                pressDrive = true;
+                robot.Robot.ResetYaw();
+                heading = robot.Robot.getImuRawHeading();
+            }
+        }
+        else if (gamepad1.dpad_right) {
+            if (!pressDrive) {
                 pressDrive = true;
                 controlMod = !controlMod;
             }
-            //upSideDownMod = !upSideDownMod;
-
-        }
-        else
-        {
+        } else {
             pressDrive = false;
         }
+        /*
         if(gamepad1.a)
         {
             robot_Ftclib .driveRobotCentric(0,
                     -0.25,
                     0);
         }
-        else if (!fieldCentricDrive)
-        {
-            if (controlMod == true)
-            {
-                robot_Ftclib.driveRobotCentric(
-                        strafeSpeed/2,
-                        forwardSpeed/3,
-                        turnSpeed/3);
-            }
-            else
-            {
-                robot_Ftclib.driveRobotCentric(
-                        strafeSpeed,
-                        forwardSpeed,
-                        turnSpeed);
-            }
-        }
-        else
-        {
-            if (controlMod)
-            {
+
+         */
+        if (gamepadEx1.isDown(GamepadKeys.Button.LEFT_STICK_BUTTON)) {
+            desiredHeading = 45;
+            holdHeading(TURN_SPEED, desiredHeading);
+        } else if (gamepadEx1.isDown(GamepadKeys.Button.RIGHT_STICK_BUTTON)) {
+            desiredHeading = 90;
+            holdHeading(TURN_SPEED, desiredHeading);
+        } else {
+            if (controlMod) {
                 robot_Ftclib.driveFieldCentric(
-                        strafeSpeed/2,
-                        forwardSpeed/3,
-                        turnSpeed/3,
+                        strafeSpeed / 2,
+                        forwardSpeed / 3,
+                        turnSpeed / 3,
                         heading
 
                 );
-            }
-            else
-            {
+            } else {
                 robot_Ftclib.driveFieldCentric(
                         strafeSpeed,
                         forwardSpeed,
@@ -309,6 +300,80 @@ public class BasicOpMode_apollo_better extends OpMode {
                 );
             }
         }
+    }
+        public void holdHeading(double maxTurnSpeed, double heading) {
+
+        ElapsedTime holdTimer = new ElapsedTime();
+        holdTimer.reset();
+
+        // keep looping while we have time remaining.
+        // Determine required steering to keep on heading
+        turnSpeed = getSteeringCorrection(heading, P_TURN_GAIN);
+
+        // Clip the speed to the maximum permitted value.
+        turnSpeed = Range.clip(turnSpeed, -maxTurnSpeed, maxTurnSpeed);
+
+        // Pivot in place by applying the turning correction
+        moveRobot(0, turnSpeed);
+
+        // Display drive status for the driver.
+        //sendTelemetry(false);
+
+        // Stop all motion;
+    }
+        public double getSteeringCorrection(double desiredHeading, double proportionalGain) {
+        targetHeading = desiredHeading;  // Save for telemetry
+
+        // Get the robot heading by applying an offset to the IMU heading
+        robotHeading = getRawHeading() - headingOffset;
+
+        // Determine the heading current error
+        headingError = targetHeading - robotHeading;
+
+        // Normalize the error to be within +/- 180 degrees
+        while (headingError > 180) headingError -= 360;
+        while (headingError <= -180) headingError += 360;
+
+        // Multiply the error by the gain to determine the required steering correction/  Limit the result to +/- 1.0
+        return Range.clip(headingError * proportionalGain, -1, 1);
+    }
+        public double getRawHeading() {
+        double angles = robot.Robot.getImuRawHeading();
+        //Log.d(TAG_DRIVE, "robot angle. " + angles);
+        return angles;
+    }
+        public void moveRobot(double drive, double turn) {
+        driveSpeed = drive;     // save this value as a class member so it can be used by telemetry.
+        turnSpeed = turn;      // save this value as a class member so it can be used by telemetry.
+
+        double backLeftPower = drive - turn;
+        double backRightPower = drive + turn;
+        double frontRightPower = drive + turn;
+        double frontLeftPower = drive - turn;
+
+        double maxFront = Math.max(Math.abs(frontLeftPower), Math.abs(frontRightPower));
+        double maxBack = Math.max(Math.abs(backLeftPower), Math.abs(backRightPower));
+        double max = Math.max(maxFront, maxBack);
+
+        if (max > 1) {
+            backLeftPower /= max;
+            backRightPower /= max;
+            frontLeftPower /= max;
+            frontRightPower /= max;
+        }
+        /*
+        Log.d(TAG_DRIVE, "Wheel turn is " + turn);
+        Log.d(TAG_DRIVE, "Wheel Speeds is; " +
+                " back Left Power is " + backLeftPower +
+                " back Right Power is " + backRightPower +
+                " front Right Power" + frontRightPower +
+                " front Left Power" + frontLeftPower);
+
+         */
+        robot_Ftclib.SetPower(RobotHardware_apollo.DriveMotors.BACK_LEFT_DRIVE, -backLeftPower);
+        robot_Ftclib.SetPower(RobotHardware_apollo.DriveMotors.BACK_RIGHT_DRIVE, backRightPower);
+        robot_Ftclib.SetPower(RobotHardware_apollo.DriveMotors.FRONT_RIGHT_DRIVE, frontRightPower);
+        robot_Ftclib.SetPower(RobotHardware_apollo.DriveMotors.FRONT_LEFT_DRIVE, -frontLeftPower);
     }
 
     public class collectThread extends Thread
@@ -326,172 +391,161 @@ public class BasicOpMode_apollo_better extends OpMode {
             {
                 while (!isInterrupted())
                 {
-                    boolean pixelCollection = gamepad2.left_bumper;
-                    double pixelEmission = gamepad2.left_trigger;
-                    boolean collectPixel = gamepad2.right_bumper;
-                    float dumpPixel =  gamepad2.right_trigger;
-                    if (gamepadEx2.wasJustPressed(GamepadKeys.Button.LEFT_STICK_BUTTON))
+                    double pixelCollection = gamepad1.left_trigger;
+                    double pixelEmission = gamepad1.right_trigger;
+                    boolean collectPixel = gamepad1.left_bumper;
+                    boolean dumpPixel =  gamepad1.right_bumper;
+                    //detectPixel();
+                    if ((gamepad1.options) || gamepad1.start)
                     {
-                       lunchDrone();
-                        gamepad2.rumble(1, 1, 500);
-                    }
-                    if (gamepad2.share)
-                    {
-                        if (!pressDrone)
+                        if (pressDrone == false)
                         {
                             pressDrone = true;
-                            robot.MoveServo.closeGard();
+                            lunchDrone();
+                            gamepad1.rumble(1, 1, Gamepad.RUMBLE_DURATION_CONTINUOUS);
                         }
-
                     }
                     else
                     {
                         pressDrone = false;
                     }
-                    if (gamepad1.dpad_down)
+                    switch (robot.Robot.collectionStats)
                     {
-                        if (!pressCollectionConf)
-                        {
-                            if (gamepad1.back)
+                        case FINISHED_AUTO:
+                        case NORMAL:
+                            if (gamepad1.ps)
                             {
-                                RobotHardware_apollo.SERVO_POS.ARM_DUMP.Pos -= 0.01;
-                                RobotHardware_apollo.SERVO_POS.ARM_COLLECT.Pos -= 0.01;
-                                Log.d(TAG_COLLECTION, "ARM_DUMP is " + RobotHardware_apollo.SERVO_POS.ARM_DUMP.Pos);
-                                robot.MoveServo.dumpPixel();
-                                armServoPos = RobotHardware_apollo.SERVO_POS.ARM_DUMP.Pos;
-                            }
-                            else
-                            {
-                                double currentPosition = robot.GetPosServo.arm();
-                                currentPosition -= 0.01;
-                                robot.SetPosServo.arm(currentPosition);
-                            }
-                            pressCollectionConf = true;
-                        }
-
-                    }
-                    else if (gamepad1.dpad_up)
-                    {
-                        if (!pressCollectionConf)
-                        {
-                            if (gamepad1.back)
-                            {
-                                RobotHardware_apollo.SERVO_POS.ARM_DUMP.Pos += 0.01;
-                                RobotHardware_apollo.SERVO_POS.ARM_COLLECT.Pos += 0.01;
-                                //robot.ARM_SERVO_DUMP_POS += 0.025;
-                                Log.d(TAG_COLLECTION, "ARM_DUMP is " + RobotHardware_apollo.SERVO_POS.ARM_DUMP.Pos);
-                                robot.MoveServo.dumpPixel();
-                               armServoPos = RobotHardware_apollo.SERVO_POS.ARM_DUMP.Pos;
-                            }
-                            else
-                            {
-                                double currentPosition = robot.GetPosServo.arm();
-                                currentPosition += 0.01;
-                                robot.SetPosServo.arm(currentPosition);
-                            }
-                            pressCollectionConf = true;
-
-                        }
-                    }
-                    else if (gamepad1.dpad_left)
-                    {
-                        if (!pressCollectionConf)
-                        {
-                            if (gamepad1.back)
-                            {
-                                switch (robot.Robot.armGardState)
+                                if (!pressAutoCollection)
                                 {
-                                    case OPEN:
-                                    {
-                                        RobotHardware_apollo.SERVO_POS.ARM_GARD_OPEN.Pos -= 0.001;
-                                        Log.d(TAG_COLLECTION, "ARM_GARD_OPEN is " + RobotHardware_apollo.SERVO_POS.ARM_GARD_OPEN.Pos);
-                                        robot.MoveServo.openGard();
-                                        armGardServoPos = RobotHardware_apollo.SERVO_POS.ARM_GARD_OPEN.Pos;
-                                    }
+                                    pressAutoCollection = true;
+                                    numOfPixelsToCollect = 2;
+                                    pixelInCollection = 0;
+                                    collectionLastPos = 0;
+                                    robot.Robot.SetMode(RobotHardware_apollo.DriveMotors.COLLECTION, DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                                    robot.Robot.SetMode(RobotHardware_apollo.DriveMotors.COLLECTION, DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                                    robot.SetPower.collection(-1);
+                                    CollectionAutoTimer.reset();
+                                    robot.Robot.collectionStats = RobotHardware_apollo.CollectionStats.AUTO;
+                                    gamepad1.rumbleBlips(3);
                                     break;
-                                    case CLOSE:
-                                    {
-                                        RobotHardware_apollo.SERVO_POS.ARM_GARD_CLOSE.Pos -= 0.001;
-                                        Log.d(TAG_COLLECTION, "ARM_GARD_CLOSE is " + RobotHardware_apollo.SERVO_POS.ARM_GARD_CLOSE.Pos);
-                                        robot.MoveServo.closeGard();
-                                        armGardServoPos = RobotHardware_apollo.SERVO_POS.ARM_GARD_CLOSE.Pos;
-                                    }
-                                    break;
-                                    case HALF_OPEN:
-                                    {
-                                        RobotHardware_apollo.SERVO_POS.ARM_GARD_HALF_OPEN.Pos -= 0.001;
-                                        Log.d(TAG_COLLECTION, "ARM_GARD_HALF_OPEN is " + RobotHardware_apollo.SERVO_POS.ARM_GARD_HALF_OPEN.Pos);
-                                        robot.MoveServo.halfOpenGard();
-                                        armGardServoPos = RobotHardware_apollo.SERVO_POS.ARM_GARD_HALF_OPEN.Pos;
-                                    }
-                                    break;
+                                }
+                            }
+                            else if (pixelEmission != 0)
+                            {
+                                robot.SetPower.collection(pixelEmission);
+                                //collectionMotor(collectionBackSpeed);
+                                robot.Robot.collectionStats = RobotHardware_apollo.CollectionStats.NORMAL;
+                                gamepad1.rumble(0.1,0.1,Gamepad.RUMBLE_DURATION_CONTINUOUS);
+                            }
+                            else if (pixelCollection != 0)
+                            {
+                                if (pressCollection == false)
+                                {
+                                    pressCollection = true;
+                                    CollectPixel();
+
+                                }
+                                collectionMotor(-collectionSpeed);
+                                robot.Robot.collectionStats = RobotHardware_apollo.CollectionStats.NORMAL;
+                                gamepad1.rumble(0.1,0.1,Gamepad.RUMBLE_DURATION_CONTINUOUS);
+                            }
+                            else
+                            {
+                                if (robot.Robot.collectionStats == RobotHardware_apollo.CollectionStats.NORMAL)
+                                {
+                                    collectionMotor(0);
+                                }
+                                if((!pressDrone) && (robot.Robot.collectionStats == RobotHardware_apollo.CollectionStats.NORMAL))
+                                {
+                                    gamepad1.stopRumble();
+                                }
+                                pressAutoCollection = false;
+                            }
+                            break;
+                        case AUTO:
+                            detectPixel();
+                            if (gamepad1.ps)
+                            {
+                                if (!pressAutoCollection)
+                                {
+                                    pressAutoCollection = true;
+                                    gamepad1.rumbleBlips(2);
+                                    robot.Robot.collectionStats = RobotHardware_apollo.CollectionStats.NORMAL;
                                 }
                             }
                             else
                             {
-                                servoCurrentPosition = robot.GetPosServo.gard();
-                                servoCurrentPosition -= 0.01;
-                                robot.SetPosServo.gard(servoCurrentPosition);
+                                pressAutoCollection = false;
                             }
-                            pressCollectionConf = true;
-                        }
-                    }
-                    else if (gamepad1.dpad_right)
-                    {
-                        if (!pressCollectionConf)
-                        {
-                            if (gamepad1.back)
+                            double collectionPos = robot.GetPosMotor.collection();
+                            Log.d(TAG_COLLECTION,"collection pos is " + collectionPos);
+                            if (robot.Robot.GetPower(RobotHardware_apollo.DriveMotors.COLLECTION) < 0)
                             {
-                                switch (robot.Robot.armGardState)
+                                if (collectionPos + 30 > collectionLastPos)
                                 {
-                                    case OPEN: {
-                                        RobotHardware_apollo.SERVO_POS.ARM_GARD_OPEN.Pos += 0.001;
-                                        Log.d(TAG_COLLECTION, "ARM_GARD_OPEN is " + RobotHardware_apollo.SERVO_POS.ARM_GARD_OPEN.Pos);
-                                        robot.MoveServo.openGard();
-                                        armGardServoPos = RobotHardware_apollo.SERVO_POS.ARM_GARD_OPEN.Pos;
-                                    }
-                                    break;
-                                    case CLOSE: {
-                                        RobotHardware_apollo.SERVO_POS.ARM_GARD_CLOSE.Pos += 0.001;
-                                        Log.d(TAG_COLLECTION, "ARM_GARD_CLOSE is " + RobotHardware_apollo.SERVO_POS.ARM_GARD_CLOSE.Pos);
-                                        robot.MoveServo.closeGard();
-                                        armGardServoPos = RobotHardware_apollo.SERVO_POS.ARM_GARD_CLOSE.Pos;
-                                    }
-                                    break;
-                                    case HALF_OPEN:
-                                    {
-                                        RobotHardware_apollo.SERVO_POS.ARM_GARD_HALF_OPEN.Pos += 0.001;
-                                        Log.d(TAG_COLLECTION, "ARM_GARD_HALF_OPEN is " + RobotHardware_apollo.SERVO_POS.ARM_GARD_HALF_OPEN.Pos);
-                                        robot.MoveServo.halfOpenGard();
-                                        armGardServoPos = RobotHardware_apollo.SERVO_POS.ARM_GARD_HALF_OPEN.Pos;
-                                    }
-                                    break;
+                                    robot.SetPower.collection(1);
+                                }
+                            }
+                            else if (robot.Robot.GetPower(RobotHardware_apollo.DriveMotors.COLLECTION) > 0)
+                            {
+                                if (collectionPos - 50 > collectionLastPos)
+                                {
+                                    robot.SetPower.collection(-1);
+                                    Log.d(TAG_COLLECTION,"detected jum a pos " + collectionPos);
+                                    collectionLastPos = collectionPos;
+                                }
+                            }
+                            else if (pixelInCollection != numOfPixelsToCollect)
+                            {
+                                robot.SetPower.collection(-1);
+                            }
+                            if (!duringCollection && pixelInCollection == numOfPixelsToCollect)
+                            {
+                                robot.SetPower.collection(1);
+                                robot.Robot.collectionStats = RobotHardware_apollo.CollectionStats.FINISHED_AUTO;
+                                gamepad1.rumbleBlips(3);
+                                break;
+                            }
+                            if (duringCollection)
+                            {
+                                if (PixelInDetectionTimeOut.seconds() >= 2)
+                                {
+                                    pixelInCollection--;
+                                    robot.SetPower.collection(1);
+                                    PixelInDetectionTimeOut.reset();
+                                    sleep(250);
                                 }
                             }
                             else
                             {
-                                servoCurrentPosition = robot.GetPosServo.gard();
-                                servoCurrentPosition += 0.01;
-                                robot.SetPosServo.gard(servoCurrentPosition);
+                                PixelInDetectionTimeOut.reset();
                             }
-                            pressCollectionConf = true;
-                        }
-                    }
-                    else
-                    {
-                        pressCollectionConf = false;
+                            if (CollectionAutoTimer.seconds() > 1)
+                            {
+                                Log.d(TAG_COLLECTION,"counted collection pos is " + collectionPos);
+                                collectionLastPos = robot.GetPosMotor.collection();
+                                CollectionAutoTimer.reset();
+                            }
+                            break;
                     }
                     if (collectPixel == true)
                     {
                         if (pressCollectionServo == false)
                         {
                             pressCollectionServo = true;
-                            CollectPixel();
-                            liftTread.goTo(0);
+                            if (robot.Robot.armState == RobotHardware_apollo.ArmState.HIGH_COLLECT)
+                            {
+                                CollectPixel();
+                                liftTread.goTo(0);
+                            }
+                            else
+                            {
+                                robot.Robot.armState = RobotHardware_apollo.ArmState.HIGH_COLLECT;
+                                robot.SetPosServo.arm(RobotHardware_apollo.SERVO_POS.ARM_DUMP_AUTO.Pos);
+                            }
                         }
                     }
-
-                    else if (dumpPixel != 0)
+                    else if (dumpPixel == true)
                     {
                         if (pressCollectionServo == false)
                         {
@@ -508,27 +562,6 @@ public class BasicOpMode_apollo_better extends OpMode {
                         servoStayInPos();
                         pressCollectionServo = false;
                     }
-                    if (pixelEmission != 0)
-                    {
-                        collectionMotor(collectionBackSpeed);
-                        gamepad2.rumble(0.1,0.1,Gamepad.RUMBLE_DURATION_CONTINUOUS);
-                    }
-                    else if (pixelCollection == true)
-                    {
-                        if (pressCollection == false)
-                        {
-                            pressCollection = true;
-                            CollectPixel();
-
-                        }
-                        collectionMotor(-collectionSpeed);
-                        gamepad2.rumble(0.1,0.1,Gamepad.RUMBLE_DURATION_CONTINUOUS);
-                    }
-                    else
-                    {
-                        collectionMotor(0);
-                        gamepad2.stopRumble();
-                    }
                 }
             }
             catch (Exception e)
@@ -536,6 +569,33 @@ public class BasicOpMode_apollo_better extends OpMode {
                 Log.d(TAG_COLLECTION_THREAD, "catch exception: " + e.toString());
             }
 
+        }
+        public void detectPixel()
+        {
+            double distance = robot.Robot.getDistance(DistanceUnit.CM);
+            if (distance < 8)
+            {
+                pixelNotInCollection = 0;
+                if (!duringCollection)
+                {
+                    duringCollection = true;
+                    if (pixelInCollection <= 100)
+                    {
+                        pixelInCollection++;
+                    }
+                }
+            }
+            else
+            {
+                if (pixelNotInCollection >= 7)
+                {
+                    duringCollection = false;
+                }
+                else
+                {
+                    pixelNotInCollection++;
+                }
+            }
         }
         public void lunchDrone()
         {
@@ -559,6 +619,7 @@ public class BasicOpMode_apollo_better extends OpMode {
         }
         public void CollectPixel()
         {
+
             robot.MoveServo.collectPixel();
             robot.MoveServo.openGard();
         }
@@ -619,14 +680,14 @@ public class BasicOpMode_apollo_better extends OpMode {
             liftTime.reset();
             Log.d(TAG_LIFT, "start");
             while (!isInterrupted()) {
-                boolean liftUp = gamepad2.dpad_up;
-                boolean liftDown = gamepad2.dpad_down;
-                boolean liftPositionY = gamepad2.y;
-                boolean liftPositionA = gamepad2.a;
-                boolean liftPositionB = gamepad2.b;
-                boolean liftPositionX = gamepad2.x;
-                boolean liftStop = gamepadEx1.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER);
-                boolean liftReset = gamepadEx1.isDown(GamepadKeys.Button.RIGHT_BUMPER);
+                boolean liftUp = gamepad1.dpad_up;
+                boolean liftDown = gamepad1.dpad_down;
+                boolean liftPositionY = gamepad1.y;
+                boolean liftPositionA = gamepad1.a;
+                boolean liftPositionB = gamepad1.b;
+                boolean liftPositionX = gamepad1.x;
+                //boolean liftStop = gamepadEx1.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER);
+                //boolean liftReset = gamepadEx1.isDown(GamepadKeys.Button.RIGHT_BUMPER);
                 Log.d(TAG_LIFT, "liftPositionY " + liftPositionY);
                 Log.d(TAG_LIFT, "liftPositionA " + liftPositionA);
                 Log.d(TAG_LIFT, "liftPositionB " + liftPositionB);
@@ -637,6 +698,7 @@ public class BasicOpMode_apollo_better extends OpMode {
                 } else {
                     robot.Robot.SetZeroPowerBehavior(RobotHardware_apollo.DriveMotors.LIFT, DcMotor.ZeroPowerBehavior.BRAKE);
                 }
+                /*
                 if (liftStop) {
                     switch (robot.Robot.liftLockStat) {
                         case UNLOCKED:
@@ -660,6 +722,8 @@ public class BasicOpMode_apollo_better extends OpMode {
                     robot.SetMode.lift(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     telemetry.addLine("lift is at pos 0");
                 }
+
+                 */
                 if (liftUp == false) {
                     resetIncoder();
                 }
@@ -746,7 +810,7 @@ public class BasicOpMode_apollo_better extends OpMode {
                     }
 
                 }
-                if ((liftPositionA == false) && (liftPositionB == false) && (liftPositionX == false) && (liftPositionY == false) && (gamepad2.right_bumper == false) && (gamepad2.left_bumper == false) && (!liftDown) && (!liftUp)) {
+                if ((liftPositionA == false) && (liftPositionB == false) && (liftPositionX == false) && (liftPositionY == false) && (gamepad1.right_bumper == false) && (gamepad1.left_bumper == false) && (!liftDown) && (!liftUp)) {
                     pressLift = false;
                 }
 

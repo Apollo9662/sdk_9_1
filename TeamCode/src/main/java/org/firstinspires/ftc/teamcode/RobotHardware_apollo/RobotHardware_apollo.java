@@ -47,6 +47,7 @@ import com.qualcomm.robotcore.hardware.VoltageSensor;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
@@ -76,6 +77,7 @@ public class RobotHardware_apollo {
         HALF_OPEN}
     public ArmGardState armGardState;
     public enum ArmState{COLLECT,
+        HIGH_COLLECT,
         DUMP}
     public enum LiftLockStat
     {
@@ -120,12 +122,19 @@ public class RobotHardware_apollo {
             LIFT,
             LIFT_SECOND,
             LIFT_STOP_SERVO,
-            COLLECTION};
+            COLLECTION}
     public enum DRONE_STATE
     {
         LUNCH,
         LOADED
-    };
+    }
+    public enum CollectionStats
+    {
+        NORMAL,
+        AUTO,
+        FINISHED_AUTO
+    }
+    public CollectionStats collectionStats;
     public DRONE_STATE drone_state;
     public enum SERVO_POS {
         //DUMP_SERVO_CLOSE (0.9),
@@ -137,7 +146,7 @@ public class RobotHardware_apollo {
         DRONE_LUNCH (0.25),
         ARM_COLLECT (1.0),
         ARM_DUMP (0.4389),
-        //ARM_DUMP_AUTO_DRIVE (0.44),
+        ARM_DUMP_AUTO (0.19),
         ARM_GARD_OPEN (0.46),
         ARM_GARD_CLOSE (0.5),
         ARM_GARD_HALF_OPEN (0.475);
@@ -389,6 +398,42 @@ public class RobotHardware_apollo {
             case COLLECTION:
             {
                 return collection.getPower();
+            }
+            default:
+                return (0);
+        }
+    }
+    public double GetCurrent(DriveMotors motor)
+    {
+        switch (motor) {
+
+            case BACK_LEFT_DRIVE:
+            {
+                return backLeftDrive.getCurrent(CurrentUnit.AMPS);
+            }
+            case BACK_RIGHT_DRIVE:
+            {
+                return backRightDrive.getCurrent(CurrentUnit.AMPS);
+            }
+            case FRONT_LEFT_DRIVE:
+            {
+                return frontLeftDrive.getCurrent(CurrentUnit.AMPS);
+            }
+            case FRONT_RIGHT_DRIVE:
+            {
+                return frontRightDrive.getCurrent(CurrentUnit.AMPS);
+            }
+            case LIFT:
+            {
+                return lift.getCurrent(CurrentUnit.AMPS);
+            }
+            case LIFT_SECOND:
+            {
+                return liftSecond.getCurrent(CurrentUnit.AMPS);
+            }
+            case COLLECTION:
+            {
+                return collection.getCurrent(CurrentUnit.AMPS);
             }
             default:
                 return (0);
@@ -774,7 +819,7 @@ public class RobotHardware_apollo {
     }
     public void ResetYaw()
     {
-        headingOffset = getImuRawHeading();
+        headingOffset += getImuRawHeading();
     }
     public double getBatteryVoltage() {
         double result = Double.POSITIVE_INFINITY;
